@@ -28,3 +28,7 @@ Si j'avais plus de temps j'aurais fais une autre maquette pour la version mobile
 
 - Premier jet html pour la mise en forme
 - test pour l'implémentation d'icone et du markdown (petit soucis sur les tableau qui je pense vient de la bibliotheque imposée)
+
+Comme toujours, l'accessibilité me pose problème: jamais sûr d'utiliser toutes les bonnes pratiques.
+J'ai hésité pour l'organisation mais je suis partit de cette façon: faire une "croquis" html pour faire la mise en forme et rendre le site responsive, puis le découper en composants, et enfin ajouter le traitement js. 
+J'ai pas mal de retard: je n'ai même pas encore commencé le CSS, j'ai pris plus de temps que prévu pour faire le wireframe et me décider sur le design et surtout sur l'étude du projet globale: j'avais peur de rater une info à propos des tokens et de la méthode pour utiliser l'api de mistral.
