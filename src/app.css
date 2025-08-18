@@ -4,20 +4,34 @@
     font-optical-sizing: auto;
     font-weight: normal;
     font-style: normal;
+    --primary-color: #474350; 
+    --secondary-color: #3B3742; 
+    --light-color: #CFD0C5; 
 }
 body{
     margin: 0;
+    overflow: auto;
 }
-.container{
-    display: flex;
+ul, li{
+    list-style: none;
+    padding: 0;
 }
-aside{
-    width: 25%;
-    height: 100dvh;
-    position: sticky;
-    top: 0;
-    left: 0;
+a{
+    text-decoration: inherit;
+    color: inherit;
 }
-main{
-    width: 75%;
+a:hover{
+    font-weight: bold;
+}
+button,
+input,
+textarea{
+    border: none;
+}
+input,
+textarea{
+    outline: none;
+}
+button:hover{
+    cursor: pointer;
 }

@@ -35,8 +35,8 @@ La beauté de la question de Douglas Adams, c’est qu’elle nous renvoie à no
 
 <div class="container">
     <aside class="chat-manager" aria-label="gestionnaire des conversations">
-        <h2>Historique</h2>
         <ul class="chat-list">
+            <h2>Historique</h2>
             <!-- svelte-ignore a11y_invalid_attribute -->
             <li>
                 <a
@@ -77,32 +77,35 @@ La beauté de la question de Douglas Adams, c’est qu’elle nous renvoie à no
                 >
             </li>
         </ul>
-        <section>
+        <section class="add-section">
             <p class="add-chat" aria-label="Ajouter une nouvelle conversation">
                 <span class="chat-title">Nouveau chat</span>
                 <button type="button">+</button>
             </p>
             <form>
-                <input type="text" placeholder="Saisissez le titre" />
+                <input type="text" placeholder="Saisissez le titre" required/>
             </form>
         </section>
     </aside>
 
     <main>
-        <section class="question">
-            <p>
-                Peux-tu me donner la réponse à la grande question sur la vie,
-                l'Univers et le reste?
-            </p>
-        </section>
-        <section class="answer">
-            <div class="markdown-body">
-                <Markdown md={answer} />
-            </div>
-        </section>
+        <div class="chat">
+            <section class="question">
+                <p>
+                    Peux-tu me donner la réponse à la grande question sur la vie,
+                    l'Univers et le reste?
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim magni quidem mollitia, dolorem, quas minima velit quis iste repudiandae, et autem consectetur soluta atque. Sit, veniam. Architecto unde itaque magnam?
+                </p>
+            </section>
+            <section class="answer">
+                <div class="markdown-body">
+                    <Markdown md={answer} />
+                </div>
+            </section>
+        </div>
         <section class="message">
             <form>
-                <textarea id="message__input" placeholder="Posez votre question"
+                <textarea autofocus id="message__input" placeholder="Posez votre question" required
                 ></textarea>
                 <!-- svelte-ignore a11y_mouse_events_have_key_events -->
                 <button
@@ -131,4 +134,88 @@ La beauté de la question de Douglas Adams, c’est qu’elle nous renvoie à no
 </div>
 
 <style>
+    .container {
+        display: flex;
+    }
+    aside {
+        width: 25%;
+        height: 100dvh;
+        position: sticky;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 1.5rem 1rem;
+        color: var(--primary-color);
+    }
+    aside h2 {
+        font-weight: 600;
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    aside li,
+    aside section {
+        font-size: 1.5rem;
+    }
+    aside li,
+    .add-chat,
+    aside form {
+        margin: 1.5rem 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .add-chat:hover {
+        cursor: pointer;
+    }
+    .add-chat:hover .chat-title {
+        font-weight: bold;
+    }
+    aside button {
+        height: 1.5rem;
+        font-size: 1rem;
+    }
+    aside button:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    aside input {
+        width: 100%;
+    }
+    aside input:focus {
+        outline-color: var(--primary-color);
+    }
+    main {
+        width: 75%;
+        padding: 1.5rem 1rem;
+        padding-left: 4rem;
+        position: relative;
+    }
+    main section {
+        margin: 1.5rem 0;
+    }
+    .question {
+        display: flex;
+        justify-content: flex-end;
+    }
+    .question p {
+        padding: 1.5rem 1rem;
+        border-radius: 1rem;
+        background-color: var(--light-color);
+        color: var(--secondary-color);
+        font-style: italic;
+        max-width: 80%;
+    }
+    .message {
+        position: sticky;
+        bottom: 0;
+        background-color: white;
+        padding: 1rem 0;
+    }
+    .message textarea{
+        width: 60%;
+        margin-right: 1.5rem;
+    }
 </style>
