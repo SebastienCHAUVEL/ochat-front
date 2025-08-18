@@ -5,3 +5,19 @@
     font-weight: normal;
     font-style: normal;
 }
+body{
+    margin: 0;
+}
+.container{
+    display: flex;
+}
+aside{
+    width: 25%;
+    height: 100dvh;
+    position: sticky;
+    top: 0;
+    left: 0;
+}
+main{
+    width: 75%;
+}
