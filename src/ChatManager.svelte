@@ -1,29 +1,13 @@
 <script>
     import Icon from "@iconify/svelte";
     import ChatListItem from "./ChatListItem.svelte";
+    import { createEventDispatcher } from "svelte";
 
+    const dispatch = createEventDispatcher();
     let addChat = $state(false);
     let openBurger = $state(false);
     const chatTitle = [
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi quidem tempore odio, eligendi itaque, veniam perspiciatis aperiam nobis voluptatibus neque tempora laboriosam saepe natus fuga blanditiis error quod quisquam officiis?",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
         "Chat title",
         "Chat title",
         "Chat title",

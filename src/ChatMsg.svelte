@@ -1,15 +1,20 @@
+<svelte:options customElement="chat-msg" />
+
 <script>
     import Icon from "@iconify/svelte";
-    import { createEventDispatcher } from "svelte";
-
-    const dispatch = createEventDispatcher();
 
     let msgBtnHover = $state(false);
     let message = $state(null);
 
-    async function handleSubmit(event) {
+    function handleSubmit(event) {
         event.preventDefault();
-        dispatch("submit", message);
+        $host().dispatchEvent(
+            new CustomEvent("send", {
+                detail: message,
+                bubbles: true, // Permet à l'événement de "remonter" dans le DOM
+                composed: true, // Permet à l'événement de traverser les limites des shadow DOM
+            }),
+        );
         message = "";
     }
 </script>
