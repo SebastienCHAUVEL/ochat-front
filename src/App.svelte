@@ -1,18 +1,55 @@
 <script>
-    import Markdown from "svelte-exmarkdown";
+    import Icon from "@iconify/svelte";
+    import { onMount } from "svelte";
     import ChatManager from "./ChatManager.svelte";
     import Chat from "./Chat.svelte";
+    import "./TokenForm.svelte";
+
     let apiKey = $state();
 
-
+    function getApiKey() {
+        try {
+            // - Récupérer le panier depuis localStorage
+            // - Utiliser JSON.parse() pour convertir
+            const data = localStorage.getItem("apiKey");
+            // - Gérer le cas vide : tableau vide
+            if (data === null) {
+                throw new Error("Aucune clé sauvegardée !");
+            }
+            return data;
+        } catch (error) {
+            // Si localStorage ou JSON échoue
+            console.error("Erreur lors du chargement des données: ", error);
+            return null;
+        }
+    }
+    async function addApiKey(event) {
+        apiKey = event.detail;
+        try {
+            localStorage.setItem("apiKey", apiKey);
+        } catch (error) {
+            // Si une erreur se produit (ex: quota dépassé)
+            if (error.name === "QuotaExceededError") {
+                alert("L'espace de stockage est plein. Supprimez des données.");
+            } else {
+                console.error("Erreur: " + error);
+            }
+        }
+    }
+    onMount(() => {
+        apiKey = getApiKey();
+    });
 </script>
 
 <div class="container">
-    
-    <ChatManager />
-    <main>
-        <Chat />
-    </main>
+    {#if apiKey === null}
+        <token-form ontokenSubmit={addApiKey}></token-form>
+    {:else}
+        <ChatManager />
+        <main>
+            <Chat {apiKey}/>
+        </main>
+    {/if}
 </div>
 
 <style>
@@ -25,6 +62,13 @@
         padding: 1.5rem 1rem;
         padding-left: 4rem;
         position: relative;
-        margin: auto;
+        margin: 0 auto;
+    }
+    token-form {
+        height: 100dvh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>

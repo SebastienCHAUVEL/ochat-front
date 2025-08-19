@@ -3,10 +3,9 @@
     import { onMount } from "svelte";
     import "./ChatMsg.svelte";
 
-    const apiKey = "tqwuIojx5T7o3r8ToMZ1JzFicfG2J34V";
+    const {apiKey} = $props();
     const url = "https://api.mistral.ai/v1/chat/completions";
 
-    let msgBtnHover = $state(false);
     let questions = $state([]);
     let answers = $state([]);
 
@@ -17,7 +16,7 @@
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer tqwuIojx5T7o3r8ToMZ1JzFicfG2J34V`,
+                    Authorization: `Bearer ${apiKey}`,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({

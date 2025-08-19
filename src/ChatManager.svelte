@@ -1,9 +1,7 @@
 <script>
     import Icon from "@iconify/svelte";
     import ChatListItem from "./ChatListItem.svelte";
-    import { createEventDispatcher } from "svelte";
 
-    const dispatch = createEventDispatcher();
     let addChat = $state(false);
     let openBurger = $state(false);
     const chatTitle = [

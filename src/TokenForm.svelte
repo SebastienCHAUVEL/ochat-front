@@ -1,37 +1,37 @@
-<svelte:options customElement="chat-msg" />
+<svelte:options customElement="token-form" />
 
 <script>
     import Icon from "@iconify/svelte";
 
+    let token = $state();
     let msgBtnHover = $state(false);
-    let message = $state(null);
 
     function handleSubmit(event) {
         event.preventDefault();
         $host().dispatchEvent(
-            new CustomEvent("send", {
-                detail: message,
+            new CustomEvent("tokenSubmit", {
+                detail: token,
                 bubbles: true, // Permet à l'événement de "remonter" dans le DOM
                 composed: true, // Permet à l'événement de traverser les limites des shadow DOM
             }),
         );
-        message = "";
     }
 </script>
 
 <form onsubmit={handleSubmit}>
-    <textarea
+    <input
+        type="text"
+        placeholder="Veuillez entrer votre token mistral"
         autofocus
-        id="message__input"
-        placeholder="Posez votre question"
         required
-        bind:value={message}
-    ></textarea>
+        bind:value={token}
+    />
+
     <!-- svelte-ignore a11y_mouse_events_have_key_events -->
     <button
         type="submit"
-        title="Envoyez votre question à Mistral AI"
-        aria-label="Envoyez votre question à Mistral AI"
+        title="valider"
+        aria-label="valider"
         onmouseover={() => {
             msgBtnHover = true;
         }}
@@ -42,10 +42,10 @@
         <div class="message__btn-icon">
             <Icon
                 icon={msgBtnHover
-                    ? "majesticons:send"
-                    : "majesticons:send-line"}
-                width="24"
-                height="24"
+                    ? "el:ok-sign"
+                    : "el:ok-circle"}
+                width="48"
+                height="48"
                 style="color: #474350"
             />
         </div>
@@ -53,15 +53,19 @@
 </form>
 
 <style>
-    form {
+    form{
+        width: 400px;
+        height: 250px;
         display: flex;
         justify-content: center;
+        align-content: center;
+        align-items: center;
     }
-    textarea {
-        width: 60%;
-        margin-right: 1.5rem;
-        border: none;
-        outline: none;
+    input {
+        margin-right: 2.5rem;
+        padding: 1rem;
+        font-size: 1.5rem;
+        outline-color: var(--primary-color);
     }
     button {
         border: none;
