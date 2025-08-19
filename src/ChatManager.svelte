@@ -2,6 +2,7 @@
     import Icon from "@iconify/svelte";
     import ChatListItem from "./ChatListItem.svelte";
 
+    let addChat = $state(false);
     let openBurger = $state(false);
     const chatTitle = [
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi quidem tempore odio, eligendi itaque, veniam perspiciatis aperiam nobis voluptatibus neque tempora laboriosam saepe natus fuga blanditiis error quod quisquam officiis?",
@@ -64,13 +65,20 @@
             {/each}
         </ul>
         <section class="add-section">
-            <p class="add-chat" aria-label="Ajouter une nouvelle conversation">
+            <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+            <!-- svelte-ignore a11y_click_events_have_key_events -->
+            <p class="add-chat" aria-label="Ajouter une nouvelle conversation"
+            onclick={() =>
+                addChat = !addChat
+            }>
                 <span class="chat-title">Nouveau chat</span>
                 <button type="button">+</button>
             </p>
-            <form>
-                <input type="text" placeholder="Saisissez le titre" required />
-            </form>
+            {#if addChat}
+                <form>
+                    <input type="text" placeholder="Saisissez un titre" required />
+                </form>
+            {/if}
         </section>
     </aside>
 </div>
@@ -109,15 +117,15 @@
         text-align: center;
         margin-bottom: 1.5rem;
     }
-    aside section {
-        font-size: 1.5rem;
-    }
     .add-chat,
     aside form {
         margin: 1.5rem 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+    .add-chat {
+        font-size: 1.5rem;
     }
     .add-chat:hover {
         cursor: pointer;

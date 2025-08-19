@@ -36,6 +36,11 @@ La beauté de la question de Douglas Adams, c’est qu’elle nous renvoie à no
 "42" est une réponse parfaite… parce qu’elle ne répond rien. Elle nous invite à continuer de chercher, de rire, et de nous émerveiller.
 `;
     let msgBtnHover = $state(false);
+    let message = "";
+    function handleSubmit(event) {
+        message = event.detail;
+        console.log(message);
+    }
 </script>
 
 <div class="chat-view">
@@ -51,7 +56,7 @@ La beauté de la question de Douglas Adams, c’est qu’elle nous renvoie à no
     </section>
 </div>
 <section class="message">
-    <ChatMsg />
+    <ChatMsg on:submit={handleSubmit}/>
 </section>
 
 <style>
