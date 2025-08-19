@@ -2,21 +2,19 @@
     import Icon from "@iconify/svelte";
     import { createEventDispatcher } from "svelte";
 
-    const apiKey = "tqwuIojx5T7o3r8ToMZ1JzFicfG2J34V";
-    const url = "https://api.mistral.ai/v1/chat/completions";
     const dispatch = createEventDispatcher();
 
     let msgBtnHover = $state(false);
     let message = $state(null);
 
-    async function sendMessage(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
         dispatch("submit", message);
         message = "";
     }
 </script>
 
-<form onsubmit={sendMessage}>
+<form onsubmit={handleSubmit}>
     <textarea
         autofocus
         id="message__input"
