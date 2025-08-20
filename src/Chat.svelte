@@ -16,6 +16,7 @@
         const question = {
             content: event.detail,
             is_ai_response: false,
+            api_key: apiKey
         };
         const savedQuestion = await saveMessage(question);
         //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
@@ -24,6 +25,7 @@
         } else {
             questions = [...questions, savedQuestion];
         }
+        //We start the loading process to display loader 
         responseIsLoading = [...responseIsLoading, true];
 
         try {
@@ -52,22 +54,27 @@
 
             const answer = {
                 content: data.choices[0].message.content,
-                is_ai_response: true
-            }
+                is_ai_response: true,
+                api_key: apiKey,
+            };
             const savedAnswer = await saveMessage(answer);
 
             if (savedAnswer === null) {
                 answers = [...answers, answer];
+                console.log("answer");
+                console.log(answer);
             } else {
+                console.log("savedAnswer");
+                console.log(savedAnswer);
                 answers = [...answers, savedAnswer];
             }
             //Changing the actual state of responseIsLoading(at the last index)
-            responseIsLoading.splice(responseIsLoading.length - 1, 1, false);
+            responseIsLoading = [...responseIsLoading.slice(0, -1), false];
         } catch (error) {
             console.error(error);
             answers = [
                 ...answers,
-                {content: "Erreur de communication avec l'API de mistral"},
+                { content: "Erreur de communication avec l'API de mistral" },
             ];
         }
     }
@@ -116,6 +123,7 @@
             const messages = data.items;
             questions = messages.filter((message) => !message.is_ai_response);
             answers = messages.filter((message) => message.is_ai_response);
+            responseIsLoading = new Array(answers.length).fill(false);
         }
     });
 </script>
@@ -134,7 +142,7 @@
                     <span class="loader__element"></span>
                     <span class="loader__element"></span>
                 </div>
-            {:else}
+            {:else if answers[i]}
                 <div class="markdown-body">
                     <Markdown md={answers[i].content} />
                 </div>

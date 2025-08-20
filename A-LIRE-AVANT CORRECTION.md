@@ -90,7 +90,7 @@ Objectif:
 Inconveniants:
 
 - Plus de travail
-- **Les remontés de variables et d'evenements entre les composants.** Pour remonter des actions de clique,d'envoie de formulaire,... ou encore des valeur de champs de saisie vers un composant parent dans svelte, il faut utiliser
+- **Les remontés de variables et d'evenements entre les composants.** Pour remonter des actions de clique,d'envoie de formulaire,... ou encore des valeur de champs de saisie vers un composant parent, j'ai utilisé
   - des élements customisés
   - un dispatcher d'évenement:
 
@@ -104,13 +104,13 @@ Inconveniants:
     );
     ```
 
-  - écouter l'évenement sur notre élement customisés:
+  - un écouteur d'évenement sur notre élement customisés:
   
     ```svelte
     <nom-du-custom-element onNOM_DE_L_EVENEMENT A REMONTER={handler}></nom-du-custom-element>
     ```
 
-    On pourra ensuite accéder à la variable que l'on souhaite remonté dans notre handler d'évenement avec event.detail
+    On pourra ensuite accéder à la variable que l'on souhaite remonter dans notre handler d'évenement avec "event.detail"
 
 ### Lier l'application à Mistral AI
 
@@ -145,3 +145,27 @@ Si j'avais eu plus de temps:
 
 - J'ajouterais un bouton pour changer de token à la navigation sur le site
 - Je changerais la mise en forme pour afficher le formulaire au premier plan du site tout en bloquand l'accès au reste et en ajoutant un effet du flou plutot que de l'afficher à la place du site
+
+## J3
+
+### Mise en place un backend Pocketbase
+
+- installation de pocketbase: dans le répertoire où l'on souhaite l'installer utiliser la commande
+
+  ```bash
+    npx pocketbase-installer
+  ```
+
+- lancer le serveur: utiliser la commande suivante dans le dossier de pocketbase
+
+  ```bash
+    ./pocketbase serve
+  ```
+
+- ajouter une collection au format demandé (un champ content et un champ is_ai_response)
+
+### Mise en place des requêtes d'enregistrement
+
+- Au démarrage, on charge l'historique des message depuis pocketbase en gérant les erreurs --> fonction getMessage()
+- quand un utilisateur envoie un message(dans la fonction sendMessage() déjà existante) on sauvegarde le message en gerrant les erreurs --> fonction saveMessage().
+- Quand mistral nous répond, (encore une fois dans la fonction sendMessage()), on sauvegarde la réponse --> encore une fois la fonction saveMessage()
