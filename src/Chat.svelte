@@ -19,7 +19,7 @@
         };
         const savedQuestion = await saveMessage(question);
         //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
-        if (question === null) {
+        if (savedQuestion === null) {
             questions = [...questions, question];
         } else {
             questions = [...questions, savedQuestion];
@@ -56,7 +56,7 @@
             }
             const savedAnswer = await saveMessage(answer);
 
-            if (answer === null) {
+            if (savedAnswer === null) {
                 answers = [...answers, answer];
             } else {
                 answers = [...answers, savedAnswer];
