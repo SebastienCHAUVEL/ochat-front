@@ -129,6 +129,7 @@ Si j'avais eu plus de temps:
 
 - J'implémenterais la désactivation du bouton d'envoie de message au chargement comme vu dans la correction
 - J'ajouterais un timestamp comme vu dans la correction
+- J'ajouterai un nettoyage et une meilleur gestion d'erreur pour la réponse de mistral comme vu dans la correction
 
 ### Sécurisation du token Mistral
 
@@ -143,4 +144,4 @@ Difficulté:
 Si j'avais eu plus de temps:
 
 - J'ajouterais un bouton pour changer de token à la navigation sur le site
-- J'ajouterai un nettoyage et une meilleur gestion d'erreur pour la réponse de mistral comme vu dans la correction
+- Je changerais la mise en forme pour afficher le formulaire au premier plan du site tout en bloquand l'accès au reste et en ajoutant un effet du flou plutot que de l'afficher à la place du site
