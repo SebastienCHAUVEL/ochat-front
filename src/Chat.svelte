@@ -4,7 +4,9 @@
     import "./ChatMsg.svelte";
 
     const { apiKey } = $props();
-    const url = "https://api.mistral.ai/v1/chat/completions";
+    const urlMistral = "https://api.mistral.ai/v1/chat/completions";
+    const urlPocketbase =
+        "http://127.0.0.1:8090/api/collections/ochat_message/records";
 
     let questions = $state([]);
     let answers = $state([]);
@@ -15,7 +17,7 @@
         responseIsLoading = [...responseIsLoading, true];
 
         try {
-            const response = await fetch(url, {
+            const response = await fetch(urlMistral, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${apiKey}`,
@@ -36,7 +38,7 @@
             }
             const data = await response.json();
             answers = [...answers, data.choices[0].message.content];
-            responseIsLoading.splice(responseIsLoading.length-1, 1, false);
+            responseIsLoading.splice(responseIsLoading.length - 1, 1, false);
         } catch (error) {
             console.error(error);
             answers = [
@@ -45,6 +47,32 @@
             ];
         }
     }
+
+    async function getMessages() {
+        try {
+            // - Utiliser JSON.parse() pour convertir
+            const response = await fetch(urlPocketbase);
+            const data = await response.json();
+            // - Gérer le cas vide : tableau vide
+            if (!response.ok) {
+                throw new Error(`Erreur lors de la récupération des message`);
+            }
+            return data;
+        } catch (error) {
+            // Si localStorage ou JSON échoue
+            console.error(error);
+            return null;
+        }
+    }
+
+    onMount(async () => {
+        const data = await getMessages();
+        if (data !== null) {
+            const messages = data.items;
+            questions = messages.filter((message) => !message.is_ai_response);
+            answers = messages.filter((message) => message.is_ai_response);
+        }
+    });
 </script>
 
 {#each questions as question, i}
@@ -72,7 +100,7 @@
     <h2>Discutez avec Mistral AI !</h2>
 {/each}
 <section class="message">
-    <chat-msg onsend={sendMessage} responseIsLoading={responseIsLoading}></chat-msg>
+    <chat-msg onsend={sendMessage} {responseIsLoading}></chat-msg>
 </section>
 
 <style>
@@ -97,7 +125,7 @@
         text-align: center;
         margin-bottom: 4rem;
     }
-    .answer{
+    .answer {
         min-height: 10dvh;
         min-width: 10vw;
     }
