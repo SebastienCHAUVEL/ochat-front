@@ -72,7 +72,7 @@
     <h2>Discutez avec Mistral AI !</h2>
 {/each}
 <section class="message">
-    <chat-msg onsend={sendMessage}></chat-msg>
+    <chat-msg onsend={sendMessage} responseIsLoading={responseIsLoading}></chat-msg>
 </section>
 
 <style>
