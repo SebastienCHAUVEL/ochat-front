@@ -38,3 +38,8 @@ button:hover{
 .hidden{
     display: none;
 }
+h2 {
+    font-weight: 600;
+    font-size: 2rem;
+    color: var(--primary-color);
+}

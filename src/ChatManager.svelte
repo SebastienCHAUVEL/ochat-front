@@ -49,16 +49,22 @@
         <section class="add-section">
             <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
             <!-- svelte-ignore a11y_click_events_have_key_events -->
-            <p class="add-chat" aria-label="Ajouter une nouvelle conversation"
-            onclick={() =>
-                addChat = !addChat
-            }>
+            <p
+                class="add-chat"
+                aria-label="Ajouter une nouvelle conversation"
+                title="Ajouter une nouvelle conversation"
+                onclick={() => (addChat = !addChat)}
+            >
                 <span class="chat-title">Nouveau chat</span>
                 <button type="button">+</button>
             </p>
             {#if addChat}
                 <form>
-                    <input type="text" placeholder="Saisissez un titre" required />
+                    <input
+                        type="text"
+                        placeholder="Saisissez un titre"
+                        required
+                    />
                 </form>
             {/if}
         </section>
@@ -92,10 +98,10 @@
     aside ul {
         height: 100%;
         overflow: auto;
+        display: flex;
+        flex-direction: column;
     }
-    aside h2 {
-        font-weight: 600;
-        font-size: 2rem;
+    h2 {
         text-align: center;
         margin-bottom: 1.5rem;
     }

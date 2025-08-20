@@ -1,5 +1,4 @@
 <script>
-    import Icon from "@iconify/svelte";
     import { onMount } from "svelte";
     import ChatManager from "./ChatManager.svelte";
     import Chat from "./Chat.svelte";
