@@ -12,20 +12,24 @@
     let answers = $state([]);
     let responseIsLoading = $state([]);
 
+    let answerElement = $state();
+
+    $effect(() => {
+        if (answerElement) {
+            answerElement.scrollIntoView({ behavior: "smooth" });
+        }
+    });
+
     async function sendMessage(event) {
         const question = {
             content: event.detail,
             is_ai_response: false,
-            api_key: apiKey
+            api_key: apiKey,
         };
         const savedQuestion = await saveMessage(question);
         //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
-        if (savedQuestion === null) {
-            questions = [...questions, question];
-        } else {
-            questions = [...questions, savedQuestion];
-        }
-        //We start the loading process to display loader 
+        questions = [...questions, savedQuestion || question];
+        //We start the loading process to display loader
         responseIsLoading = [...responseIsLoading, true];
 
         try {
@@ -59,15 +63,8 @@
             };
             const savedAnswer = await saveMessage(answer);
 
-            if (savedAnswer === null) {
-                answers = [...answers, answer];
-                console.log("answer");
-                console.log(answer);
-            } else {
-                console.log("savedAnswer");
-                console.log(savedAnswer);
-                answers = [...answers, savedAnswer];
-            }
+            answers = [...answers, savedAnswer || answer];
+
             //Changing the actual state of responseIsLoading(at the last index)
             responseIsLoading = [...responseIsLoading.slice(0, -1), false];
         } catch (error) {
@@ -76,6 +73,7 @@
                 ...answers,
                 { content: "Erreur de communication avec l'API de mistral" },
             ];
+            responseIsLoading = [...responseIsLoading.slice(0, -1), false];
         }
     }
 
@@ -135,7 +133,7 @@
                 {question.content}
             </p>
         </section>
-        <section class="answer">
+        <section class="answer" bind:this={answerElement}>
             {#if responseIsLoading[i]}
                 <div class="loader">
                     <span class="loader__element"></span>
