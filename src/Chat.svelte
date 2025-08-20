@@ -13,7 +13,17 @@
     let responseIsLoading = $state([]);
 
     async function sendMessage(event) {
-        questions = [...questions, event.detail];
+        const question = {
+            content: event.detail,
+            is_ai_response: false,
+        };
+        const savedQuestion = await saveMessage(question);
+        //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
+        if (question === null) {
+            questions = [...questions, question];
+        } else {
+            questions = [...questions, savedQuestion];
+        }
         responseIsLoading = [...responseIsLoading, true];
 
         try {
@@ -28,38 +38,73 @@
                     messages: [
                         {
                             role: "user",
-                            content: questions[questions.length - 1],
+                            content: question.content,
                         },
                     ],
                 }),
             });
             if (!response.ok) {
-                throw new Error(`Erreur HTTP: ${response.status}`);
+                throw new Error(
+                    `Erreur de communication avec mistral: ${response.status}`,
+                );
             }
             const data = await response.json();
-            answers = [...answers, data.choices[0].message.content];
+
+            const answer = {
+                content: data.choices[0].message.content,
+                is_ai_response: true
+            }
+            const savedAnswer = await saveMessage(answer);
+
+            if (answer === null) {
+                answers = [...answers, answer];
+            } else {
+                answers = [...answers, savedAnswer];
+            }
+            //Changing the actual state of responseIsLoading(at the last index)
             responseIsLoading.splice(responseIsLoading.length - 1, 1, false);
         } catch (error) {
             console.error(error);
             answers = [
                 ...answers,
-                "Erreur de communication avec l'API de mistral",
+                {content: "Erreur de communication avec l'API de mistral"},
             ];
+        }
+    }
+
+    async function saveMessage(message) {
+        try {
+            const response = await fetch(urlPocketbase, {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json",
+                },
+                body: JSON.stringify(message),
+            });
+            if (!response.ok) {
+                throw new Error(
+                    `Erreur lors de l'enregistrement du message: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+            return null;
         }
     }
 
     async function getMessages() {
         try {
-            // - Utiliser JSON.parse() pour convertir
             const response = await fetch(urlPocketbase);
-            const data = await response.json();
-            // - Gérer le cas vide : tableau vide
             if (!response.ok) {
-                throw new Error(`Erreur lors de la récupération des message`);
+                throw new Error(
+                    `Erreur lors de la récupération des message: ${response.status}`,
+                );
             }
+            const data = await response.json();
             return data;
         } catch (error) {
-            // Si localStorage ou JSON échoue
             console.error(error);
             return null;
         }
@@ -79,7 +124,7 @@
     <div class="chat-view">
         <section class="question">
             <p>
-                {question}
+                {question.content}
             </p>
         </section>
         <section class="answer">
@@ -91,7 +136,7 @@
                 </div>
             {:else}
                 <div class="markdown-body">
-                    <Markdown md={answers[i]} />
+                    <Markdown md={answers[i].content} />
                 </div>
             {/if}
         </section>
