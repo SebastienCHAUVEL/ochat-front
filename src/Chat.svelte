@@ -11,7 +11,6 @@
     let questions = $state([]);
     let answers = $state([]);
     let responseIsLoading = $state([]);
-
     let answerElement = $state();
 
     $effect(() => {

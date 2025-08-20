@@ -23,7 +23,6 @@ Si j'avais plus de temps j'aurais fais une autre maquette pour la version mobile
 - installation d'un fichier css pour la mise en forme du markdown
 - installation d'un fichier reset.css (josh comeau)
 - installation des bibliothèques exmarkdown et iconify
-- mise en place des variables CSS
 
   ```bash
     npm install --save-dev @iconify/svelte
@@ -31,6 +30,7 @@ Si j'avais plus de temps j'aurais fais une autre maquette pour la version mobile
   ```
 
 - creation d'un favicon avec favicon.io
+- mise en place des variables CSS
 
 ### Intégration de l'UI - HTML
 
@@ -38,7 +38,7 @@ Si j'avais plus de temps j'aurais fais une autre maquette pour la version mobile
 - test et réalisation de l'implémentation d'icone et du markdown (petit soucis sur les tableau qui je pense vient de la bibliotheque imposée)
 
 Comme toujours, la sémantique et l'accessibilité me pose question sur le html: jamais sûr d'utiliser toutes les bonnes pratiques.
-J'ai hésité pour l'organisation mais je suis partit de cette façon: faire une "croquis" html pour faire la mise en forme et rendre le site responsive, puis le découper en composants, et enfin ajouter le traitement js.
+J'ai hésité pour l'organisation mais je suis partit de cette façon: faire une "croquis" html pour pouvoir faire la mise en forme et rendre le site responsive, puis le découper en composants, et enfin ajouter le traitement js.
 
 ### Intégration de l'UI - CSS
 
@@ -57,7 +57,7 @@ Je n'ai pas eu le temps de faire la version mobile/tablette ni le découpage en 
 - mise en place d'un "burger menu" sur la sidebar gestionnaire des conversations qui ne s'affiche que lorsqu'on l'ouvre
 - ajout d'une animation sur la liste des conversation dans la sidebar: au survol, le titre de la conversation se souligne progressivement de la gauche vers la droite
 - L'input pour la saisie d'un titre pour une nouvelle conversation est maintenant caché et vient s'afficher lorsqu'on clique sur "nouveau chat"
-- mise en place du responsive pour toutes les versions. Le site s'adapte déjà bien sur chaque version grâce à l'utilisation d'unité responsive. Les élements qui posent problème: en dessous de certains breakpoints, la sidebar devient illisible et le formulaire d'envoie de question gene une lecture confortable de la conversation, j'ai donc testé les différents breakpoints à l'aider de l'outil device toolbar integré à chromium:
+- mise en place du responsive pour toutes les versions. Le site s'adapte déjà bien sur chaque version grâce à l'utilisation d'unité responsive. Les élements qui posent problème: en dessous de certains breakpoints, la sidebar devient illisible et le formulaire d'envoie de question gene une lecture confortable de la conversation, j'ai donc testé les différents breakpoints à l'aide de l'outil device toolbar integré à chromium:
   - en dessous de 930px, la sidebar s'elargit(25% de l'ecran --> 35%) et vient se positionné par dessus le flux de la page(position: fixed)
   - en dessous de 732px, le formulaire d'envoie des question n'est plus sticky mais vient se positionner à la suite de la conversation pour ne pas gener
   - en dessous de 728px, la sidebar vient prendre 80% de la taille de l'ecran
@@ -69,6 +69,7 @@ Remarque:
 Si j'avais plus de temps:
 
 - J'ajouterais une animation pour un affichage progressif sur la sidebar et sur l'input de saisie du titre d'une nouvelle conversation.
+- J'ajouterais une icone pour la suppression des conversation
 
 ### Découpage en composants
 
@@ -119,7 +120,7 @@ Inconveniants:
   - utilisation d'un tableau pour les question et un tableau pour les réponse que nous renvoie Mistral
   - utilisation de fetch pour envoyer les questions à mistral
   - gestion d'erreur
-  - ajout d'une variable "responseIsLoading" et mise en place d'un loader en html/CSS (sur le bouton d'envoie de message et sur la réponse) qui s'affiche losque la requête est en cours de chargement
+  - ajout d'une variable "responseIsLoading" pour la mise en place d'un loader en html/CSS (sur le bouton d'envoie de message et sur la réponse) qui s'affiche losque la requête est en cours de chargement
 
 Difficulté:
 
@@ -148,7 +149,7 @@ Si j'avais eu plus de temps:
 
 ## J3
 
-### Mise en place un backend Pocketbase
+### Mise en place d'un backend Pocketbase
 
 - installation de pocketbase: dans le répertoire où l'on souhaite l'installer utiliser la commande
 
@@ -168,4 +169,5 @@ Si j'avais eu plus de temps:
 
 - Au démarrage, on charge l'historique des message depuis pocketbase en gérant les erreurs --> fonction getMessage()
 - quand un utilisateur envoie un message(dans la fonction sendMessage() déjà existante) on sauvegarde le message en gerrant les erreurs --> fonction saveMessage().
-- Quand mistral nous répond, (encore une fois dans la fonction sendMessage()), on sauvegarde la réponse --> encore une fois la fonction saveMessage()
+- Quand mistral nous répond, (encore une fois dans la fonction sendMessage()), on sauvegarde la réponse -->  fonction saveMessage()
+- J'ai décidé de stocker la valeur de la clé API de l'utilisateur dans ses messages pour conserver l'origine de chaque message --> ajout d'un champ api_key à la collection et modification du traitement des messages dans sendMessage() pour ajouter une propriété apiKey à l'objet qui contient le message
