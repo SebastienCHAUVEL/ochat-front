@@ -37,8 +37,9 @@
         </div>
     </button>
     <aside
-        class={openBurger ? "chat-manager open" : "chat-manager"}
+        class={openBurger ? "chat-manager open" : "chat-manager hidden"}
         aria-label="gestionnaire des conversations"
+        aria-hidden={openBurger}
     >
         <ul class="chat-list">
             <h2>Historique</h2>
@@ -73,7 +74,7 @@
 
 <style>
     .manager-container {
-        max-width: 25%;
+        max-width: 25dvw;
     }
     .burger-btn {
         display: block;
@@ -90,17 +91,19 @@
         left: 0;
         display: flex;
         flex-direction: column;
-        width: 0;
+        width: 25dvw;
         justify-content: space-between;
         padding: 1.5rem 1rem;
         color: var(--primary-color);
-        transition: transform 0.5s ease-in-out;
+        transition: all 0.5s ease-in-out;
         overflow: hidden;
+    }
+    .chat-manager.hidden {
         transform: translateX(-100%);
+        position: absolute;
     }
     .chat-manager.open {
         transform: translateX(0);
-        width: 100%;
     }
     aside ul {
         height: 100%;
@@ -141,19 +144,19 @@
     }
     @media (max-width: 930px) {
         .manager-container {
-            max-width: 35%;
+            max-width: 35dvw;
         }
         .chat-manager {
             position: fixed;
-            max-width: 35%;
+            width: 35dvw;
         }
     }
     @media (max-width: 728px) {
         .manager-container {
-            max-width: 80%;
+            max-width: 80dvw;
         }
         .chat-manager {
-            max-width: 80%;
+            width: 80dvw;
         }
     }
 </style>
