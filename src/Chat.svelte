@@ -1,9 +1,11 @@
 <script>
     import Markdown from "svelte-exmarkdown";
     import { onMount } from "svelte";
+    import { currentConversation } from "./state.svelte";
     import "./ChatMsg.svelte";
 
     const { apiKey } = $props();
+
     const urlMistral = "https://api.mistral.ai/v1/chat/completions";
     const urlPocketbase =
         "http://127.0.0.1:8090/api/collections/ochat_message/records";
@@ -21,12 +23,16 @@
             answerElement.scrollIntoView({ behavior: "smooth" });
         }
     });
-
+    $effect(() => {
+        if (currentConversation.id) {
+            fillChat();
+        }
+    });
     async function sendMessage(event) {
         const question = {
             content: event.detail,
             is_ai_response: false,
-            api_key: apiKey,
+            id_conversation: currentConversation.id,
         };
         const savedQuestion = await saveMessage(question);
         //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
@@ -61,7 +67,7 @@
             const answer = {
                 content: data.choices[0].message.content,
                 is_ai_response: true,
-                api_key: apiKey,
+                id_conversation: currentConversation.id,
             };
             const savedAnswer = await saveMessage(answer);
 
@@ -103,7 +109,8 @@
 
     async function getMessages() {
         try {
-            const response = await fetch(urlPocketbase);
+            const filter = `(id_conversation='${currentConversation.id}')`;
+            const response = await fetch(`${urlPocketbase}?filter=${filter}`);
             if (!response.ok) {
                 throw new Error(
                     `Erreur lors de la récupération des message: ${response.status}`,
@@ -117,14 +124,24 @@
         }
     }
 
-    onMount(async () => {
-        const data = await getMessages();
-        if (data !== null) {
-            const messages = data.items;
-            questions = messages.filter((message) => !message.is_ai_response);
-            answers = messages.filter((message) => message.is_ai_response);
-            responseIsLoading = new Array(answers.length).fill(false);
+    async function fillChat() {
+        if (currentConversation.id) {
+            const data = await getMessages();
+            if (data !== null) {
+                const messages = data.items;
+                questions = messages.filter(
+                    (message) => !message.is_ai_response,
+                );
+                answers = messages.filter((message) => message.is_ai_response);
+                console.log(questions);
+                console.log(answers);
+            }
         }
+    }
+
+    onMount(() => {
+        fillChat();
+        responseIsLoading = new Array(answers.length).fill(false);
     });
 </script>
 

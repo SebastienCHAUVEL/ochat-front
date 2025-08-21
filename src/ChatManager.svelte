@@ -2,6 +2,7 @@
     import Icon from "@iconify/svelte";
     import ChatListItem from "./ChatListItem.svelte";
     import { onMount } from "svelte";
+    import { currentConversation } from "./state.svelte";
 
     const urlPocketbaseConversation =
         "http://127.0.0.1:8090/api/collections/ochat_conversation/records";
@@ -76,6 +77,7 @@
             const data = await getConversation();
             if (data !== null) {
                 conversations = data.items;
+                currentConversation.id = conversations[0].id;
             }
         }
     });
@@ -110,7 +112,7 @@
         <ul class="chat-list">
             <h2>Historique</h2>
             {#each conversations as conversation}
-                <ChatListItem {conversation} />
+                <ChatListItem {conversation}/>
             {/each}
         </ul>
         <section class="add-section">
@@ -177,12 +179,10 @@
         overflow: auto;
         display: flex;
         flex-direction: column;
-        border-bottom: 1px solid var(--primary-color);
     }
     h2 {
         text-align: center;
         padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--primary-color);
     }
     h2::after {
         content: "";

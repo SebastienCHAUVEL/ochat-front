@@ -1,15 +1,23 @@
 <script>
+    import { currentConversation } from "./state.svelte";
+
     const { conversation } = $props();
+
+    function handleConversationSelected(event) {
+        event.preventDefault();
+        currentConversation.id = conversation.id;
+    }
 </script>
 
 <!-- svelte-ignore a11y_invalid_attribute -->
-<div class="container">
+<div class=" class={currentConversation.id === conversation.id ? " container selected" : " container"}">
     <li>
         <a
             href=""
             class="chat-title"
             aria-label="accedez à la conversation"
-            title="accedez à la conversation">{conversation.title}</a
+            title="accedez à la conversation"
+            onclick={handleConversationSelected}>{conversation.title}</a
         >
         <button
             type="button"
@@ -28,6 +36,9 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+    .selected .underline{
+        width: 80%;
     }
     li a {
         flex: 1;

@@ -1,0 +1,1 @@
+export let currentConversation = $state({id: undefined});

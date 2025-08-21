@@ -62,6 +62,7 @@
         padding-left: 4rem;
         position: relative;
         margin: 0 auto;
+        transition: all 0.5s ease-in-out;
     }
     token-form {
         height: 100dvh;
