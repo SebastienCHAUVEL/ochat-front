@@ -96,13 +96,13 @@ Inconveniants:
   - un dispatcher d'évenement:
 
     ```svelte
-    $host().dispatchEvent(  //Dispatcher d'evenement vers l'element host
-        new CustomEvent("NOM_DE_L_EVENEMENT A REMONTER", {
-            detail: variableARemonter,
-            bubbles: true, // Permet à l'événement de "remonter" dans le DOM
-            composed: true, // Permet à l'événement de traverser les limites des shadow DOM
-        }),
-    );
+      $host().dispatchEvent(  //Dispatcher d'evenement vers l'element host
+          new CustomEvent("NOM_DE_L_EVENEMENT A REMONTER", {
+              detail: variableARemonter,
+              bubbles: true, // Permet à l'événement de "remonter" dans le DOM
+              composed: true, // Permet à l'événement de traverser les limites des shadow DOM
+          }),
+      );
     ```
 
   - un écouteur d'évenement sur notre élement customisés:
@@ -171,3 +171,22 @@ Si j'avais eu plus de temps:
 - quand un utilisateur envoie un message(dans la fonction sendMessage() déjà existante) on sauvegarde le message en gerrant les erreurs --> fonction saveMessage().
 - Quand mistral nous répond, (encore une fois dans la fonction sendMessage()), on sauvegarde la réponse -->  fonction saveMessage()
 - J'ai décidé de stocker la valeur de la clé API de l'utilisateur dans ses messages pour conserver l'origine de chaque message --> ajout d'un champ api_key à la collection et modification du traitement des messages dans sendMessage() pour ajouter une propriété apiKey à l'objet qui contient le message
+
+### Autre
+
+- Ajout d'un scroll automatique vers la section "answer" à l'envoie d'un message:
+  
+    ```svele
+      //Using $effect() to look on "answerElement" change --> for example when a new section is mounted
+      $effect(() => {
+          //Check if the element is mounted
+          if (answerElement) {
+              //Scroll to element
+              answerElement.scrollIntoView({ behavior: "smooth" });
+          }
+      });
+    ```
+
+    ```svelte
+      <section class="answer" bind:this={answerElement}>
+    ```

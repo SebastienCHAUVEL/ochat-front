@@ -13,8 +13,11 @@
     let responseIsLoading = $state([]);
     let answerElement = $state();
 
+    //Using $effect() to look on "answerElement" change --> for example when a new section is mounted
     $effect(() => {
+        //Check if the element is mounted
         if (answerElement) {
+            //Scroll to element
             answerElement.scrollIntoView({ behavior: "smooth" });
         }
     });

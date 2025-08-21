@@ -18,7 +18,7 @@
             title="supprimez cette conversation">x</button
         >
     </li>
-    <div class="underline"></div>
+    <div class="underline" aria-hidden="true"></div>
 </div>
 
 <style>

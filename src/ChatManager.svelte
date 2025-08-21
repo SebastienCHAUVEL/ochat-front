@@ -37,7 +37,7 @@
         </div>
     </button>
     <aside
-        class={openBurger ? "chat-manager" : "hidden"}
+        class={openBurger ? "chat-manager open" : "chat-manager"}
         aria-label="gestionnaire des conversations"
     >
         <ul class="chat-list">
@@ -90,10 +90,17 @@
         left: 0;
         display: flex;
         flex-direction: column;
-        width: 100%;
+        width: 0;
         justify-content: space-between;
         padding: 1.5rem 1rem;
         color: var(--primary-color);
+        transition: transform 0.5s ease-in-out;
+        overflow: hidden;
+        transform: translateX(-100%);
+    }
+    .chat-manager.open {
+        transform: translateX(0);
+        width: 100%;
     }
     aside ul {
         height: 100%;
