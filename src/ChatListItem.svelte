@@ -14,7 +14,7 @@
         const isDeleted = await deleteConversation(conversation.id);
         if (isDeleted) {
             conversationToDelete.id = conversation.id;
-        }
+        }// //!TODO!\\ else
     }
 
     async function deleteConversation(id) {

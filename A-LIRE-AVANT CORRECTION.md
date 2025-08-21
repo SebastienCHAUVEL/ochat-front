@@ -172,7 +172,7 @@ Si j'avais eu plus de temps:
 - Quand mistral nous répond, (encore une fois dans la fonction sendMessage()), on sauvegarde la réponse -->  fonction saveMessage()
 - J'ai décidé de stocker la valeur de la clé API de l'utilisateur dans ses messages pour conserver l'origine de chaque message --> ajout d'un champ api_key à la collection et modification du traitement des messages dans sendMessage() pour ajouter une propriété apiKey à l'objet qui contient le message
 
-### Autre
+### Amelioration de l'UX
 
 - Ajout d'un scroll automatique vers la section "answer" à l'envoie d'un message:
   
@@ -195,4 +195,61 @@ Si j'avais eu plus de temps:
 
 ### Mise en place d'un système de conversations
 
-- Ajout d'une collection à pocketbase pour stocker des conversation: un champ titre et un champs user_token qui remplacera la champs apiKey de la collection message + modification sur la collection message: ajout d'un champ relation vers la collection conversation: chaque message fait partie d'une conversation
+- Ajout d'une collection à pocketbase pour stocker des conversation: un champ titre et un champs user_token afin de renseigner l'origine des conversation qui remplacera la champs apiKey de la collection message
+- modification sur la collection message: ajout d'un champ relation vers la collection conversation: chaque message fait partie d'une conversation
+
+### Ajout des fonctionnalités de gestion des conversation dans sur la sidebar
+
+- Mise en place de l'ajout d'une nouvelle conversation(fonction addConversation()) et de sa sauvegarde dans pocketbase(fonction saveConversation())
+- Possibilité de selectionner une conversation dans la sidebar (fonction handleConversationSelected):
+  - utilisation d'état partagé entre mes composants dans une variable "currentConversation" qui stock l'id de la conversation selectionné
+  - exploitation de la réactivité de svelte (avec $effect) pour mettre le chat à jour: si currentConversation.id est modifié, on récupere les message qui sont lié à cette conversation pour les afficher
+- Ajout de la suppression au clique sur le bouton
+  - sur le site(fonction handleDelete()) et dans pocketbase(deleteConversation())
+  - selectionne la premiere conversation si on supprime la conversation courante(currentConversation.id prends la valeur de la premiere conversation stockée)
+
+### Autres
+
+- Changement de métode pour l'affichage de la sidebar pour un effet progressif, à la place de display:none pour la cacher on a maintenant:
+  
+  ```CSS
+    .chat-manager {
+        /* ... */
+        transition: all 0.5s ease-in-out;
+        overflow: hidden;
+    }
+    .chat-manager.hidden {
+        transform: translateX(-100%);
+        position: absolute;
+    }
+    .chat-manager.open {
+        transform: translateX(0);
+    }
+  ```
+
+  En essayant de rester accssible pour les lecteurs d'ecran:
+
+  ```html
+    <aside
+        class={openBurger ? "chat-manager open" : "chat-manager hidden"}
+        aria-label="gestionnaire des conversations"
+        aria-hidden={!openBurger}
+    >
+  ```
+
+- Ajout d'une mise en forme sur la conversation selectionnée (soulignée à 80%)
+
+### Si j'avais plus de temps
+
+- Implémentations
+  - j'ajouterais un affichage progressif de l'input qui s'ouvre à l'ajout d'une conversation
+  - j'ajouterais un bouton pour remonter en haut de la page
+  - j'ameliorerais mon système de scroll automatique
+  - j'ajouterais des commentaire à mon code
+  - j'ajouterais un bouton valider à mon formulaire de saisie d'un nouveau titre
+  - Je metterais en place des test plus avancés pour corriger les éventuels bug
+
+- Debugguage restant:
+
+  - Parfois la transition de la sidebar s'opere sur l'ouverture mais pas la fermeture'
+  - Parfois le loader se met aussi sur les réponse précédentes de mistral au lieu de ne se mettre que sur la derniere

@@ -28,11 +28,6 @@
             fillChat();
         }
     });
-    $effect(() => {
-        if(conversationToDelete.id === currentConversation.id){
-            fillChat();
-        }
-    })
     async function sendMessage(event) {
         const question = {
             content: event.detail,
@@ -130,20 +125,18 @@
     }
 
     async function fillChat() {
-        if (currentConversation.id) {
-            const data = await getMessages();
-            if (data !== null) {
-                const messages = data.items;
-                questions = messages.filter(
-                    (message) => !message.is_ai_response,
-                );
-                answers = messages.filter((message) => message.is_ai_response);
-            }
+        const data = await getMessages();
+        if (data !== null) {
+            const messages = data.items;
+            questions = messages.filter((message) => !message.is_ai_response);
+            answers = messages.filter((message) => message.is_ai_response);
         }
     }
 
     onMount(() => {
-        fillChat();
+        if (currentConversation.id) {
+            fillChat();
+        }
         responseIsLoading = new Array(answers.length).fill(false);
     });
 </script>
