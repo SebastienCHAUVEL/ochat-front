@@ -82,8 +82,12 @@
         if (data !== null) {
             conversations = data.items;
             if (conversations.length > 0) {
-                console.log(conversations);
-                currentConversation.id = conversations[0].id;
+                if (
+                    currentConversation.id === conversationToDelete.id ||
+                    conversationToDelete.id === undefined
+                ) {
+                    currentConversation.id = conversations[0].id;
+                }
             }
         }
     }
