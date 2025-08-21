@@ -206,7 +206,7 @@ Si j'avais eu plus de temps:
   - exploitation de la réactivité de svelte (avec $effect) pour mettre le chat à jour: si currentConversation.id est modifié, on récupere les message qui sont lié à cette conversation pour les afficher
 - Ajout de la suppression au clique sur le bouton
   - sur le site(fonction handleDelete()) et dans pocketbase(deleteConversation())
-  - selectionne la premiere conversation si on supprime la conversation courante(currentConversation.id prends la valeur de la premiere conversation stockée)
+  - selectionne la premiere conversation si on supprime la conversation courante(currentConversation.id prends la valeur de la premiere conversation stockée)  
 
 ### Autres
 
@@ -248,6 +248,3 @@ Si j'avais eu plus de temps:
   - j'ajouterais des commentaire à mon code
   - j'ajouterais un bouton valider à mon formulaire de saisie d'un nouveau titre
   - Je metterais en place des test plus avancés pour corriger les éventuels bug
-
-- Debugguage restant:
-  - Parfois la transition de la sidebar s'opere sur l'ouverture mais pas la fermeture

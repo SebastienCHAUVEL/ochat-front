@@ -30,9 +30,10 @@
         const savedConversation = await saveConversation(newConversation);
         //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
         conversations = [
-            ...conversations,
             savedConversation || newConversation,
+            ...conversations,
         ];
+        currentConversation.id = conversations[0].id;
         newTitle = "";
     }
 
@@ -80,20 +81,20 @@
     async function fillConversations() {
         const data = await getConversations();
         if (data !== null) {
-            conversations = data.items;
-            if (conversations.length > 0) {
-                if (
-                    currentConversation.id === conversationToDelete.id ||
-                    conversationToDelete.id === undefined
-                ) {
-                    currentConversation.id = conversations[0].id;
-                }
+            conversations = data.items.reverse();
+            if (conversations.length === 0) {
+                currentConversation.id = "empty";
+                console.log(currentConversation.id);
+                console.log("tableau vide");
             }
         }
     }
     onMount(async () => {
         if (apiKey) {
-            fillConversations();
+            await fillConversations();
+            if (conversations.length > 0) {
+                currentConversation.id = conversations[0].id;
+            }
         }
     });
 </script>
@@ -127,7 +128,7 @@
         <ul class="chat-list">
             <h2>Historique</h2>
             {#each conversations as conversation}
-                <ChatListItem {conversation} />
+                <ChatListItem {conversation} {conversations} />
             {/each}
         </ul>
         <section class="add-section">
@@ -181,6 +182,7 @@
         color: var(--primary-color);
         transition: all 0.5s ease-in-out;
         overflow: hidden;
+        border-radius: 0 5px 5px 0;
     }
     .chat-manager.hidden {
         transform: translateX(-100%);
@@ -205,6 +207,8 @@
         width: 25%;
         border-bottom: 3px solid var(--primary-color);
         margin: auto;
+    }
+    .add-section {
     }
     .add-chat,
     aside form {

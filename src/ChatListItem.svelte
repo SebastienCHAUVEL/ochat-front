@@ -1,7 +1,7 @@
 <script>
     import { currentConversation, conversationToDelete } from "./state.svelte";
 
-    const { conversation } = $props();
+    const { conversation , conversations} = $props();
 
     const urlPocketbaseConversation =
         "http://127.0.0.1:8090/api/collections/ochat_conversation/records";
@@ -14,6 +14,9 @@
         const isDeleted = await deleteConversation(conversation.id);
         if (isDeleted) {
             conversationToDelete.id = conversation.id;
+            if(conversationToDelete.id === currentConversation.id) {
+                currentConversation.id = conversations[0].id;
+            }
         }// //!TODO!\\ else
     }
 
@@ -68,9 +71,6 @@
         justify-content: space-between;
         align-items: center;
     }
-    .selected .underline {
-        width: 80%;
-    }
     li a {
         flex: 1;
         overflow: hidden;
@@ -87,6 +87,9 @@
         align-self: flex-start;
         width: 0;
         transition: width 500ms;
+    }
+    .selected .underline {
+        width: 80%;
     }
     .container:hover .underline {
         width: 100%;

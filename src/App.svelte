@@ -59,7 +59,6 @@
         flex: 1;
         max-width: 1000px;
         padding: 1.5rem 1rem;
-        padding-left: 4rem;
         position: relative;
         margin: 0 auto;
         transition: all 0.5s ease-in-out;

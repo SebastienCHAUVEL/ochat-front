@@ -7,6 +7,7 @@
     --primary-color: #474350; 
     --secondary-color: #3B3742; 
     --light-color: #CFD0C5; 
+    --lighter-color: #CFD0C588;
 }
 body{
     margin: 0;

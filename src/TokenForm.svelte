@@ -19,43 +19,51 @@
 </script>
 
 <form onsubmit={handleSubmit}>
-    <input
-        type="text"
-        placeholder="Veuillez entrer votre token mistral"
-        autofocus
-        required
-        bind:value={token}
-    />
-
-    <!-- svelte-ignore a11y_mouse_events_have_key_events -->
-    <button
-        type="submit"
-        title="valider"
-        aria-label="valider"
-        onmouseover={() => {
-            msgBtnHover = true;
-        }}
-        onmouseleave={() => {
-            msgBtnHover = false;
-        }}
-    >
-        <div class="message__btn-icon">
-            <Icon
-                icon={msgBtnHover
-                    ? "el:ok-sign"
-                    : "el:ok-circle"}
-                width="48"
-                height="48"
-                style="color: #474350"
-            />
-        </div>
-    </button>
+    <h1>Entrez Votre token Mistral</h1>
+    <div class="container">
+        <input
+            type="text"
+            placeholder="Veuillez entrer votre token mistral"
+            autofocus
+            required
+            bind:value={token}
+        />
+        <!-- svelte-ignore a11y_mouse_events_have_key_events -->
+        <button
+            type="submit"
+            title="valider"
+            aria-label="valider"
+            onmouseover={() => {
+                msgBtnHover = true;
+            }}
+            onmouseleave={() => {
+                msgBtnHover = false;
+            }}
+        >
+            <div class="message__btn-icon">
+                <Icon
+                    icon={msgBtnHover ? "el:ok-sign" : "el:ok-circle"}
+                    width="48"
+                    height="48"
+                    style="color: #474350"
+                />
+            </div>
+        </button>
+    </div>
 </form>
 
 <style>
-    form{
+    form {
         width: 400px;
         height: 250px;
+        display: flex;
+        flex-direction: column;
+        align-items: baseline;
+    }
+    h1 {
+        color: var(--primary-color)
+    }
+    .container {
         display: flex;
         justify-content: center;
         align-content: center;

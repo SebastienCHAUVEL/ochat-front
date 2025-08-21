@@ -137,7 +137,6 @@
     onMount(() => {
         if (currentConversation.id) {
             fillChat();
-            responseIsLoading = new Array(answers.length).fill(false);
         }
     });
 </script>
