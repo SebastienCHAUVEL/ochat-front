@@ -184,7 +184,7 @@
     }
     .chat-manager.hidden {
         transform: translateX(-100%);
-        position: absolute;
+        position: fixed;
     }
     .chat-manager.open {
         transform: translateX(0);
@@ -238,8 +238,8 @@
             max-width: 35dvw;
         }
         .chat-manager {
-            position: fixed;
             width: 35dvw;
+            position: fixed;
         }
     }
     @media (max-width: 728px) {
