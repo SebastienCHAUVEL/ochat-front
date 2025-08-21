@@ -250,6 +250,4 @@ Si j'avais eu plus de temps:
   - Je metterais en place des test plus avancés pour corriger les éventuels bug
 
 - Debugguage restant:
-
-  - Parfois la transition de la sidebar s'opere sur l'ouverture mais pas la fermeture'
-  - Parfois le loader se met aussi sur les réponse précédentes de mistral au lieu de ne se mettre que sur la derniere
+  - Parfois la transition de la sidebar s'opere sur l'ouverture mais pas la fermeture

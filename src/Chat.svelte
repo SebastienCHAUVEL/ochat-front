@@ -35,10 +35,10 @@
             id_conversation: currentConversation.id,
         };
         const savedQuestion = await saveMessage(question);
-        //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
-        questions = [...questions, savedQuestion || question];
         //We start the loading process to display loader
         responseIsLoading = [...responseIsLoading, true];
+        //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
+        questions = [...questions, savedQuestion || question];
 
         try {
             const response = await fetch(urlMistral, {
@@ -130,14 +130,15 @@
             const messages = data.items;
             questions = messages.filter((message) => !message.is_ai_response);
             answers = messages.filter((message) => message.is_ai_response);
+            responseIsLoading = new Array(answers.length).fill(false);
         }
     }
 
     onMount(() => {
         if (currentConversation.id) {
             fillChat();
+            responseIsLoading = new Array(answers.length).fill(false);
         }
-        responseIsLoading = new Array(answers.length).fill(false);
     });
 </script>
 
