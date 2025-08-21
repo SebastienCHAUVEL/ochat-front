@@ -1,7 +1,7 @@
 <script>
     import Markdown from "svelte-exmarkdown";
     import { onMount } from "svelte";
-    import { currentConversation } from "./state.svelte";
+    import { currentConversation, conversationToDelete } from "./state.svelte";
     import "./ChatMsg.svelte";
 
     const { apiKey } = $props();
@@ -28,6 +28,11 @@
             fillChat();
         }
     });
+    $effect(() => {
+        if(conversationToDelete.id === currentConversation.id){
+            fillChat();
+        }
+    })
     async function sendMessage(event) {
         const question = {
             content: event.detail,
@@ -133,8 +138,6 @@
                     (message) => !message.is_ai_response,
                 );
                 answers = messages.filter((message) => message.is_ai_response);
-                console.log(questions);
-                console.log(answers);
             }
         }
     }

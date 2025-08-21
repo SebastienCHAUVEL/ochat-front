@@ -2,7 +2,7 @@
     import Icon from "@iconify/svelte";
     import ChatListItem from "./ChatListItem.svelte";
     import { onMount } from "svelte";
-    import { currentConversation } from "./state.svelte";
+    import { currentConversation, conversationToDelete } from "./state.svelte";
 
     const urlPocketbaseConversation =
         "http://127.0.0.1:8090/api/collections/ochat_conversation/records";
@@ -13,6 +13,12 @@
     let conversations = $state([]);
 
     const { apiKey } = $props();
+
+    $effect(() => {
+        if (conversationToDelete.id) {
+            fillConversations();
+        }
+    });
 
     async function addConversation(event) {
         event.preventDefault();
@@ -27,8 +33,6 @@
             ...conversations,
             savedConversation || newConversation,
         ];
-        console.log(conversations);
-        console.log(newConversation);
         newTitle = "";
     }
 
@@ -54,7 +58,7 @@
         }
     }
 
-    async function getConversation() {
+    async function getConversations() {
         try {
             const filter = `(user_token='${apiKey}')`;
             const response = await fetch(
@@ -72,13 +76,20 @@
             return null;
         }
     }
-    onMount(async () => {
-        if (apiKey) {
-            const data = await getConversation();
-            if (data !== null) {
-                conversations = data.items;
+
+    async function fillConversations() {
+        const data = await getConversations();
+        if (data !== null) {
+            conversations = data.items;
+            if (conversations.length > 0) {
+                console.log(conversations);
                 currentConversation.id = conversations[0].id;
             }
+        }
+    }
+    onMount(async () => {
+        if (apiKey) {
+            fillConversations();
         }
     });
 </script>
@@ -112,7 +123,7 @@
         <ul class="chat-list">
             <h2>Historique</h2>
             {#each conversations as conversation}
-                <ChatListItem {conversation}/>
+                <ChatListItem {conversation} />
             {/each}
         </ul>
         <section class="add-section">

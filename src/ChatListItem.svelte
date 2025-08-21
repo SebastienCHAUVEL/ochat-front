@@ -1,16 +1,47 @@
 <script>
-    import { currentConversation } from "./state.svelte";
+    import { currentConversation, conversationToDelete } from "./state.svelte";
 
     const { conversation } = $props();
+
+    const urlPocketbaseConversation =
+        "http://127.0.0.1:8090/api/collections/ochat_conversation/records";
 
     function handleConversationSelected(event) {
         event.preventDefault();
         currentConversation.id = conversation.id;
     }
+    async function handleDelete() {
+        const isDeleted = await deleteConversation(conversation.id);
+        if (isDeleted) {
+            conversationToDelete.id = conversation.id;
+        }
+    }
+
+    async function deleteConversation(id) {
+        try {
+            const response = await fetch(`${urlPocketbaseConversation}/${id}`, {
+                method: "DELETE",
+            });
+            console.log(response);
+            if (!response.ok) {
+                throw new Error(
+                    `Erreur lors de la suppression de la conversation: ${response.status}`,
+                );
+            }
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
 </script>
 
 <!-- svelte-ignore a11y_invalid_attribute -->
-<div class=" class={currentConversation.id === conversation.id ? " container selected" : " container"}">
+<div
+    class=" class={currentConversation.id === conversation.id
+        ? ' container selected'
+        : ' container'}"
+>
     <li>
         <a
             href=""
@@ -23,7 +54,8 @@
             type="button"
             class="remove-chat"
             aria-label="supprimez cette conversation"
-            title="supprimez cette conversation">x</button
+            title="supprimez cette conversation"
+            onclick={handleDelete}>x</button
         >
     </li>
     <div class="underline" aria-hidden="true"></div>
@@ -37,7 +69,7 @@
         justify-content: space-between;
         align-items: center;
     }
-    .selected .underline{
+    .selected .underline {
         width: 80%;
     }
     li a {
