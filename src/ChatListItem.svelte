@@ -1,5 +1,5 @@
 <script>
-    let { title } = $props();
+    const { conversation } = $props();
 </script>
 
 <!-- svelte-ignore a11y_invalid_attribute -->
@@ -9,7 +9,7 @@
             href=""
             class="chat-title"
             aria-label="accedez à la conversation"
-            title="accedez à la conversation">{title}</a
+            title="accedez à la conversation">{conversation.title}</a
         >
         <button
             type="button"

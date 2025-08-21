@@ -35,16 +35,16 @@
             }
         }
     }
-    onMount(() => {
-        apiKey = getApiKey();
+    onMount(async () => {
+        apiKey = await getApiKey();
     });
 </script>
 
 <div class="container">
     {#if apiKey === null}
         <token-form ontokenSubmit={addApiKey}></token-form>
-    {:else}
-        <ChatManager />
+    {:else if apiKey !== undefined}
+        <ChatManager {apiKey}/>
         <main>
             <Chat {apiKey}/>
         </main>

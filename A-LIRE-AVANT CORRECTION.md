@@ -190,3 +190,9 @@ Si j'avais eu plus de temps:
     ```svelte
       <section class="answer" bind:this={answerElement}>
     ```
+
+## J4
+
+### Mise en place d'un système de conversations
+
+- Ajout d'une collection à pocketbase pour stocker des conversation: un champ titre et un champs user_token qui remplacera la champs apiKey de la collection message + modification sur la collection message: ajout d'un champ relation vers la collection conversation: chaque message fait partie d'une conversation

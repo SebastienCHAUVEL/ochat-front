@@ -1,18 +1,84 @@
 <script>
     import Icon from "@iconify/svelte";
     import ChatListItem from "./ChatListItem.svelte";
+    import { onMount } from "svelte";
+
+    const urlPocketbaseConversation =
+        "http://127.0.0.1:8090/api/collections/ochat_conversation/records";
 
     let addChat = $state(false);
     let openBurger = $state(false);
-    const chatTitle = [
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi quidem tempore odio, eligendi itaque, veniam perspiciatis aperiam nobis voluptatibus neque tempora laboriosam saepe natus fuga blanditiis error quod quisquam officiis?",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-        "Chat title",
-    ];
+    let newTitle = $state();
+    let conversations = $state([]);
+
+    const { apiKey } = $props();
+
+    async function addConversation(event) {
+        event.preventDefault();
+
+        let newConversation = {
+            title: newTitle,
+            user_token: apiKey,
+        };
+        const savedConversation = await saveConversation(newConversation);
+        //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
+        conversations = [
+            ...conversations,
+            savedConversation || newConversation,
+        ];
+        console.log(conversations);
+        console.log(newConversation);
+        newTitle = "";
+    }
+
+    async function saveConversation(conversationToSave) {
+        try {
+            const response = await fetch(urlPocketbaseConversation, {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json",
+                },
+                body: JSON.stringify(conversationToSave),
+            });
+            if (!response.ok) {
+                throw new Error(
+                    `Erreur lors de l'enregistrement du message: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
+    async function getConversation() {
+        try {
+            const filter = `(user_token='${apiKey}')`;
+            const response = await fetch(
+                `${urlPocketbaseConversation}?filter=${filter}`,
+            );
+            if (!response.ok) {
+                throw new Error(
+                    `Erreur lors de la récupération des conversations: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+    onMount(async () => {
+        if (apiKey) {
+            const data = await getConversation();
+            if (data !== null) {
+                conversations = data.items;
+            }
+        }
+    });
 </script>
 
 <div class="manager-container">
@@ -39,12 +105,12 @@
     <aside
         class={openBurger ? "chat-manager open" : "chat-manager hidden"}
         aria-label="gestionnaire des conversations"
-        aria-hidden={openBurger}
+        aria-hidden={!openBurger}
     >
         <ul class="chat-list">
             <h2>Historique</h2>
-            {#each chatTitle as title}
-                <ChatListItem {title} />
+            {#each conversations as conversation}
+                <ChatListItem {conversation} />
             {/each}
         </ul>
         <section class="add-section">
@@ -60,11 +126,12 @@
                 <button type="button">+</button>
             </p>
             {#if addChat}
-                <form>
+                <form onsubmit={addConversation}>
                     <input
                         type="text"
                         placeholder="Saisissez un titre"
                         required
+                        bind:value={newTitle}
                     />
                 </form>
             {/if}
@@ -110,10 +177,19 @@
         overflow: auto;
         display: flex;
         flex-direction: column;
+        border-bottom: 1px solid var(--primary-color);
     }
     h2 {
         text-align: center;
-        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--primary-color);
+    }
+    h2::after {
+        content: "";
+        display: block;
+        width: 25%;
+        border-bottom: 3px solid var(--primary-color);
+        margin: auto;
     }
     .add-chat,
     aside form {

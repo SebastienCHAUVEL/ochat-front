@@ -35,9 +35,6 @@ textarea{
 button:hover{
     cursor: pointer;
 }
-.hidden{
-    display: none;
-}
 h2 {
     font-weight: 600;
     font-size: 2rem;
