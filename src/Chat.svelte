@@ -1,6 +1,7 @@
 <script>
     import Markdown from "svelte-exmarkdown";
     import { onMount } from "svelte";
+    import { tick } from "svelte";
     import { currentConversation, conversationToDelete } from "./state.svelte";
     import "./ChatMsg.svelte";
 
@@ -15,19 +16,15 @@
     let responseIsLoading = $state([]);
     let answerElement = $state();
 
-    //Using $effect() to look on "answerElement" change --> for example when a new section is mounted
-    $effect(() => {
-        //Check if the element is mounted
-        if (answerElement) {
-            //Scroll to element
-            answerElement.scrollIntoView({ behavior: "smooth" });
-        }
-    });
     $effect(() => {
         if (currentConversation.id) {
             fillChat();
         }
     });
+    async function scrollToMessage() {
+        await tick();
+        if (answerElement) answerElement.scrollIntoView({ behavior: "smooth" });
+    }
     async function sendMessage(event) {
         const question = {
             content: event.detail,
@@ -39,6 +36,7 @@
         responseIsLoading = [...responseIsLoading, true];
         //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
         questions = [...questions, savedQuestion || question];
+        await scrollToMessage();
 
         try {
             const response = await fetch(urlMistral, {
@@ -75,6 +73,7 @@
 
             //Changing the actual state of responseIsLoading(at the last index)
             responseIsLoading = [...responseIsLoading.slice(0, -1), false];
+            await scrollToMessage();
         } catch (error) {
             console.error(error);
             answers = [

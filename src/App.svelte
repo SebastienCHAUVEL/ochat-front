@@ -5,6 +5,7 @@
     import "./TokenForm.svelte";
 
     let apiKey = $state();
+    let isLoading = $state(false);
 
     function getApiKey() {
         try {
@@ -22,7 +23,8 @@
             return null;
         }
     }
-    async function addApiKey(event) {
+    function addApiKey(event) {
+        isLoading = true;
         apiKey = event.detail;
         try {
             localStorage.setItem("apiKey", apiKey);
@@ -33,6 +35,8 @@
             } else {
                 console.error("Erreur: " + error);
             }
+        } finally { 
+            isLoading = false;
         }
     }
     onMount(async () => {
@@ -43,7 +47,7 @@
 <div class="container">
     {#if apiKey === null}
         <token-form ontokenSubmit={addApiKey}></token-form>
-    {:else if apiKey !== undefined}
+    {:else if !isLoading && apiKey !== undefined}
         <ChatManager {apiKey}/>
         <main>
             <Chat {apiKey}/>
@@ -54,6 +58,8 @@
 <style>
     .container {
         display: flex;
+        width: 100dvw;
+        min-height: 100dvh;
     }
     main {
         flex: 1;

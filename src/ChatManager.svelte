@@ -99,7 +99,7 @@
     });
 </script>
 
-<div class="manager-container">
+<div class={openBurger ? "manager-container offset" : "manager-container"}>
     <button
         class="burger-btn"
         type="button"
@@ -121,16 +121,20 @@
         </div>
     </button>
     <aside
-        class={openBurger ? "chat-manager open" : "chat-manager hidden"}
+        class={openBurger ? "chat-manager open" : "chat-manager"}
         aria-label="gestionnaire des conversations"
         aria-hidden={!openBurger}
     >
-        <ul class="chat-list">
+        <div>
             <h2>Historique</h2>
-            {#each conversations as conversation}
-                <ChatListItem {conversation} {conversations} />
-            {/each}
-        </ul>
+            <ul class="chat-list">
+                <div class="conversation">
+                    {#each conversations as conversation}
+                        <ChatListItem {conversation} {conversations} />
+                    {/each}
+                </div>
+            </ul>
+        </div>
         <section class="add-section">
             <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
             <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -159,17 +163,25 @@
 
 <style>
     .manager-container {
-        max-width: 25dvw;
+        margin-left: 0;
+        transition: margin-left 0.5s ease;
+    }
+    .manager-container.offset {
+        margin-left: 25dvw;
     }
     .burger-btn {
         display: block;
         position: fixed;
         top: 1.5rem;
         z-index: 10;
+        padding: 0;
+        margin-left: 3px;
+        transform: translateX(0);
+        transition: transform 0.5s ease;
     }
     .chat-manager {
         height: 100dvh;
-        position: sticky;
+        position: fixed;
         z-index: 5;
         background-color: white;
         top: 0;
@@ -180,22 +192,15 @@
         justify-content: space-between;
         padding: 1.5rem 1rem;
         color: var(--primary-color);
-        transition: all 0.5s ease-in-out;
+        transition: all 0.5s ease;
         overflow: hidden;
-        border-radius: 0 5px 5px 0;
-    }
-    .chat-manager.hidden {
         transform: translateX(-100%);
-        position: fixed;
     }
     .chat-manager.open {
         transform: translateX(0);
     }
     aside ul {
-        height: 100%;
-        overflow: auto;
-        display: flex;
-        flex-direction: column;
+        overflow-y: auto;
     }
     h2 {
         text-align: center;
@@ -208,7 +213,9 @@
         border-bottom: 3px solid var(--primary-color);
         margin: auto;
     }
-    .add-section {
+    .conversation {
+        border-right: 2px solid var(--primary-color);
+        padding-right: 1rem;
     }
     .add-chat,
     aside form {
@@ -241,14 +248,22 @@
         .manager-container {
             max-width: 35dvw;
         }
+        .manager-container.offset {
+            margin-left: 0;
+        }
+        .manager-container.offset .burger-btn {
+            transform: translateX(calc(35dvw - 4px));
+        }
         .chat-manager {
             width: 35dvw;
-            position: fixed;
         }
     }
     @media (max-width: 728px) {
         .manager-container {
             max-width: 80dvw;
+        }
+        .manager-container.offset .burger-btn {
+            transform: translateX(calc(80dvw - 4px));
         }
         .chat-manager {
             width: 80dvw;
