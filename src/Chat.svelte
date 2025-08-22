@@ -22,8 +22,33 @@
         }
     });
     async function scrollToMessage() {
-        await tick();
+        await tick(); //Wait for the dom to load the last change
         if (answerElement) answerElement.scrollIntoView({ behavior: "smooth" });
+    }
+    function getMessagesToSend() {
+        let messagesToSend = [];
+        for (let i = 0; i < questions.length; i++) {
+            if (questions[i]) {
+                const question = {
+                    role: "user",
+                    content: questions[i].content,
+                };
+                console.log(question);
+                messagesToSend = [...messagesToSend, question];
+            }
+            if (answers.length > 0 && i < questions.length - 1) {
+                if (!answers[i].error) {
+                    const answer = {
+                        role: "assistant",
+                        content: answers[i].content,
+                    };
+                    console.log(answer);
+                    messagesToSend = [...messagesToSend, answer];
+                }
+            }
+        }
+        console.log(messagesToSend);
+        return messagesToSend;
     }
     async function sendMessage(event) {
         const question = {
@@ -36,8 +61,9 @@
         responseIsLoading = [...responseIsLoading, true];
         //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
         questions = [...questions, savedQuestion || question];
+        const messagesToSend = getMessagesToSend();
+        console.log(messagesToSend);
         await scrollToMessage();
-
         try {
             const response = await fetch(urlMistral, {
                 method: "POST",
@@ -46,13 +72,8 @@
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    model: "mistral-tiny",
-                    messages: [
-                        {
-                            role: "user",
-                            content: question.content,
-                        },
-                    ],
+                    messages: messagesToSend,
+                    model: "mistral-small-latest",
                 }),
             });
             if (!response.ok) {
@@ -65,6 +86,7 @@
             const answer = {
                 content: data.choices[0].message.content,
                 is_ai_response: true,
+                error: false,
                 id_conversation: currentConversation.id,
             };
             const savedAnswer = await saveMessage(answer);
@@ -78,7 +100,12 @@
             console.error(error);
             answers = [
                 ...answers,
-                { content: "Erreur de communication avec l'API de mistral" },
+                {
+                    content: "Erreur de communication avec l'API de mistral",
+                    is_ai_response: true,
+                    error: true,
+                    id_conversation: currentConversation.id,
+                },
             ];
             responseIsLoading = [...responseIsLoading.slice(0, -1), false];
         }

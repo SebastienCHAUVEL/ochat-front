@@ -11,7 +11,8 @@
 }
 body{
     margin: 0;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 ul, li{
     list-style: none;
