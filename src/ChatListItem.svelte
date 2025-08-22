@@ -66,7 +66,7 @@
 <style>
     li {
         font-size: 1rem;
-        padding: 1.5rem 0 0.5rem 0;
+        padding: 1.5rem 0 0 .5rem;
         display: flex;
         justify-content: space-between;
         align-items: center;

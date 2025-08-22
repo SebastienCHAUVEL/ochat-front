@@ -11,6 +11,8 @@
     let openBurger = $state(false);
     let newTitle = $state();
     let conversations = $state([]);
+    let msgBtnHover = $state(false);
+    let displayAllConv = $state(false);
 
     const { apiKey } = $props();
 
@@ -125,13 +127,28 @@
         aria-label="gestionnaire des conversations"
         aria-hidden={!openBurger}
     >
-        <div>
+        <div class="chat-list">
             <h2>Historique</h2>
-            <ul class="chat-list">
-                <div class="conversation">
-                    {#each conversations as conversation}
+            <ul>
+                {#each conversations as conversation, i}
+                    {#if i < 1 || displayAllConv}
                         <ChatListItem {conversation} {conversations} />
-                    {/each}
+                    {/if}
+                {/each}
+                <div class="display-all">
+                    <button
+                        type="button"
+                        aria-label={displayAllConv
+                            ? "masquer les anciennes conversations"
+                            : "afficher toutes les conversation"}
+                        title={displayAllConv
+                            ? "masquer les anciennes conversations"
+                            : "afficher toutes les conversation"}
+                        onclick={() => (displayAllConv = !displayAllConv)}
+                        >{displayAllConv
+                            ? "-"
+                            : "+"}</button
+                    >
                 </div>
             </ul>
         </div>
@@ -145,7 +162,7 @@
                 onclick={() => (addChat = !addChat)}
             >
                 <span class="chat-title">Nouveau chat</span>
-                <button type="button">+</button>
+                <button type="button">{addChat? "-" : "+"}</button>
             </p>
             {#if addChat}
                 <form onsubmit={addConversation}>
@@ -155,6 +172,29 @@
                         required
                         bind:value={newTitle}
                     />
+                    <!-- svelte-ignore a11y_mouse_events_have_key_events -->
+                    <button
+                        type="submit"
+                        title="valider"
+                        aria-label="valider"
+                        onmouseover={() => {
+                            msgBtnHover = true;
+                        }}
+                        onmouseleave={() => {
+                            msgBtnHover = false;
+                        }}
+                    >
+                        <div class="message__btn-icon">
+                            <Icon
+                                icon={msgBtnHover
+                                    ? "el:ok-sign"
+                                    : "el:ok-circle"}
+                                width="24"
+                                height="24"
+                                style="color: #474350"
+                            />
+                        </div>
+                    </button>
                 </form>
             {/if}
         </section>
@@ -165,21 +205,24 @@
     .manager-container {
         margin-left: 0;
         transition: margin-left 0.5s ease;
+        position: relative;
     }
     .manager-container.offset {
         margin-left: 25dvw;
     }
-    .burger-btn {
+    button.burger-btn {
         display: block;
         position: fixed;
         top: 1.5rem;
         z-index: 10;
         padding: 0;
-        margin-left: 3px;
         transform: translateX(0);
         transition: transform 0.5s ease;
     }
-    .chat-manager {
+    .manager-container.offset button.burger-btn {
+        transform: translateX(-36px);
+    }
+    aside.chat-manager {
         height: 100dvh;
         position: fixed;
         z-index: 5;
@@ -189,7 +232,6 @@
         display: flex;
         flex-direction: column;
         width: 25dvw;
-        justify-content: space-between;
         padding: 1.5rem 1rem;
         color: var(--primary-color);
         transition: all 0.5s ease;
@@ -198,9 +240,13 @@
     }
     .chat-manager.open {
         transform: translateX(0);
+        box-shadow: 2rem 2rem 35px 5px rgba(139,138,139,0.4);
     }
-    aside ul {
+    aside .chat-list {
+        flex: 1;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
     }
     h2 {
         text-align: center;
@@ -213,9 +259,26 @@
         border-bottom: 3px solid var(--primary-color);
         margin: auto;
     }
-    .conversation {
-        border-right: 2px solid var(--primary-color);
-        padding-right: 1rem;
+    aside .chat-list ul {
+        overflow-y: auto;
+        flex: 1;
+        padding: 0 1rem;
+    }
+    .display-all {
+        padding: 1.5rem 0;
+    }
+    .display-all button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 2rem;
+        height: 2rem;
+        color: var(--primary-color);
+        font-size: 1.5rem;
+    }
+    .display-all button:hover {
+        color: white;
+        background-color: var(--primary-color);
     }
     .add-chat,
     aside form {
@@ -233,11 +296,11 @@
     .add-chat:hover .chat-title {
         font-weight: bold;
     }
-    aside button {
+    .add-chat button {
         height: 1.5rem;
         font-size: 1rem;
     }
-    aside button:hover {
+    .add-chat button:hover {
         background-color: var(--primary-color);
         color: white;
     }
@@ -245,27 +308,21 @@
         width: 100%;
     }
     @media (max-width: 930px) {
-        .manager-container {
-            max-width: 35dvw;
-        }
         .manager-container.offset {
             margin-left: 0;
         }
         .manager-container.offset .burger-btn {
-            transform: translateX(calc(35dvw - 4px));
+            transform: translateX(calc(35dvw - 32px));
         }
-        .chat-manager {
+        aside.chat-manager {
             width: 35dvw;
         }
     }
     @media (max-width: 728px) {
-        .manager-container {
-            max-width: 80dvw;
-        }
         .manager-container.offset .burger-btn {
-            transform: translateX(calc(80dvw - 4px));
+            transform: translateX(calc(80dvw - 32px));
         }
-        .chat-manager {
+        aside.chat-manager {
             width: 80dvw;
         }
     }
