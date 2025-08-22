@@ -33,7 +33,6 @@
                     role: "user",
                     content: questions[i].content,
                 };
-                console.log(question);
                 messagesToSend = [...messagesToSend, question];
             }
             if (answers.length > 0 && i < questions.length - 1) {
@@ -42,7 +41,6 @@
                         role: "assistant",
                         content: answers[i].content,
                     };
-                    console.log(answer);
                     messagesToSend = [...messagesToSend, answer];
                 }
             }
@@ -62,7 +60,6 @@
         //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
         questions = [...questions, savedQuestion || question];
         const messagesToSend = getMessagesToSend();
-        console.log(messagesToSend);
         await scrollToMessage();
         try {
             const response = await fetch(urlMistral, {

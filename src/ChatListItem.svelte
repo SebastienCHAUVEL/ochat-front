@@ -1,7 +1,7 @@
 <script>
     import { currentConversation, conversationToDelete } from "./state.svelte";
 
-    const { conversation , conversations} = $props();
+    const { conversation} = $props();
 
     const urlPocketbaseConversation =
         "http://127.0.0.1:8090/api/collections/ochat_conversation/records";
@@ -14,9 +14,6 @@
         const isDeleted = await deleteConversation(conversation.id);
         if (isDeleted) {
             conversationToDelete.id = conversation.id;
-            if(conversationToDelete.id === currentConversation.id) {
-                currentConversation.id = conversations[0].id;
-            }
         }// //!TODO!\\ else
     }
 

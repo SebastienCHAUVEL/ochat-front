@@ -37,6 +37,7 @@
         ];
         currentConversation.id = conversations[0].id;
         newTitle = "";
+        addChat = false;
     }
 
     async function saveConversation(conversationToSave) {
@@ -84,11 +85,14 @@
         const data = await getConversations();
         if (data !== null) {
             conversations = data.items.reverse();
+            console.log(currentConversation.id);
             if (conversations.length === 0) {
                 currentConversation.id = "empty";
-                console.log(currentConversation.id);
                 console.log("tableau vide");
             }
+        }
+        if (conversationToDelete.id === currentConversation.id) {
+            currentConversation.id = conversations[0].id;
         }
     }
     onMount(async () => {
@@ -132,7 +136,7 @@
             <ul>
                 {#each conversations as conversation}
                     {#if displayAllConv || currentConversation.id === conversation.id}
-                        <ChatListItem {conversation} {conversations} />
+                        <ChatListItem {conversation} />
                     {/if}
                 {/each}
                 {#if conversations.length > 1}
