@@ -66,7 +66,7 @@
 <style>
     li {
         font-size: 1rem;
-        padding: 1.5rem 0 0 .5rem;
+        padding-top: 1.5rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -76,6 +76,12 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+    .selected li a {
+        font-weight: 600;
+    }
+    .selected li a:hover{
+        font-weight: bold;
     }
     button:hover {
         background-color: var(--primary-color);

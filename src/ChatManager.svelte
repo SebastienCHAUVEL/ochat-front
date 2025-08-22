@@ -130,26 +130,26 @@
         <div class="chat-list">
             <h2>Historique</h2>
             <ul>
-                {#each conversations as conversation, i}
-                    {#if i < 1 || displayAllConv}
+                {#each conversations as conversation}
+                    {#if displayAllConv || currentConversation.id === conversation.id}
                         <ChatListItem {conversation} {conversations} />
                     {/if}
                 {/each}
-                <div class="display-all">
-                    <button
-                        type="button"
-                        aria-label={displayAllConv
-                            ? "masquer les anciennes conversations"
-                            : "afficher toutes les conversation"}
-                        title={displayAllConv
-                            ? "masquer les anciennes conversations"
-                            : "afficher toutes les conversation"}
-                        onclick={() => (displayAllConv = !displayAllConv)}
-                        >{displayAllConv
-                            ? "-"
-                            : "+"}</button
-                    >
-                </div>
+                {#if conversations.length > 1}
+                    <div class="display-all">
+                        <button
+                            type="button"
+                            aria-label={displayAllConv
+                                ? "masquer les anciennes conversations"
+                                : "afficher toutes les conversation"}
+                            title={displayAllConv
+                                ? "masquer les anciennes conversations"
+                                : "afficher toutes les conversation"}
+                            onclick={() => (displayAllConv = !displayAllConv)}
+                            >{displayAllConv ? "-" : "+"}</button
+                        >
+                    </div>
+                {/if}
             </ul>
         </div>
         <section class="add-section">
@@ -162,7 +162,7 @@
                 onclick={() => (addChat = !addChat)}
             >
                 <span class="chat-title">Nouveau chat</span>
-                <button type="button">{addChat? "-" : "+"}</button>
+                <button type="button">{addChat ? "-" : "+"}</button>
             </p>
             {#if addChat}
                 <form onsubmit={addConversation}>
@@ -240,7 +240,7 @@
     }
     .chat-manager.open {
         transform: translateX(0);
-        box-shadow: 2rem 2rem 35px 5px rgba(139,138,139,0.4);
+        box-shadow: 2rem 2rem 35px 5px rgba(139, 138, 139, 0.4);
     }
     aside .chat-list {
         flex: 1;
@@ -262,7 +262,7 @@
     aside .chat-list ul {
         overflow-y: auto;
         flex: 1;
-        padding: 0 1rem;
+        padding-left: 1rem;
     }
     .display-all {
         padding: 1.5rem 0;
@@ -271,8 +271,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 2rem;
-        height: 2rem;
+        width: 1.5rem;
+        height: 1.5rem;
         color: var(--primary-color);
         font-size: 1.5rem;
     }
