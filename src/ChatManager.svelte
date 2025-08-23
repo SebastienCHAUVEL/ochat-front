@@ -2,6 +2,7 @@
     import Icon from "@iconify/svelte";
     import ChatListItem from "./ChatListItem.svelte";
     import { onMount } from "svelte";
+    import { tick } from "svelte";
     import {
         currentConversation,
         conversationToDelete,
@@ -86,18 +87,34 @@
         }
     }
 
-    async function updateConversation(conversation) {
-        
+    async function updateConversation(conversationToUpdate) {
+        try {
+            const response = await fetch(`${urlPocketbaseConversation}/${conversationToUpdate.id}`, {
+                method: "PATCH",
+                headers: {
+                    "content-type": "application/json",
+                },
+                body: JSON.stringify(conversationToUpdate),
+            });
+            if (!response.ok) {
+                throw new Error(
+                    `Erreur lors de l'enregistrement du message: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
     }
 
     async function fillConversations() {
         const data = await getConversations();
         if (data !== null) {
             conversations = data.items.reverse();
-            console.log(currentConversation.id);
             if (conversations.length === 0) {
                 currentConversation.id = "empty";
-                console.log("tableau vide");
             }
         }
         if (conversationToDelete.id === currentConversation.id) {
@@ -112,11 +129,11 @@
         const conversationToUpdate = conversations.find(
             (conversation) => conversation.id === isModifying.id,
         );
-        const newConversation = conversationToUpdate;
+        let newConversation = conversationToUpdate;
         newConversation.title = newTitle;
 
-        conversations.splice(1, index, newConversation)
-        await updateConversation(newConversation);
+        const updatedConversation = await updateConversation(newConversation);
+        conversations.splice(index, 1, updatedConversation || newConversation);
         isModifying.status = false;
     }
     onMount(async () => {
