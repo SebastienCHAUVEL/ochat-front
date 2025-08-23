@@ -248,3 +248,14 @@ Si j'avais eu plus de temps:
   - j'ajouterais des commentaire à mon code
   - j'ajouterais un bouton valider à mon formulaire de saisie d'un nouveau titre
   - Je metterais en place des test plus avancés pour corriger les éventuels bug
+
+TO DO
+
+- finir update conversaion
+- ajouter un titre auto au premier chat
+- desactiver les boutons au chargement
+- ajouter une omber au dessus du champ de saisie des msg
+- ajouter un titre en fonction de la conv
+- ajouter un bouton etes vous sur à la suppression d'une conversation
+- bouton changement de token
+- bouton remouter/redescendre

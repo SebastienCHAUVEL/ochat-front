@@ -2,13 +2,18 @@
     import Icon from "@iconify/svelte";
     import ChatListItem from "./ChatListItem.svelte";
     import { onMount } from "svelte";
-    import { currentConversation, conversationToDelete } from "./state.svelte";
+    import {
+        currentConversation,
+        conversationToDelete,
+        isModifying,
+    } from "./state.svelte";
 
     const urlPocketbaseConversation =
         "http://127.0.0.1:8090/api/collections/ochat_conversation/records";
 
     let addChat = $state(false);
-    let openBurger = $state(false);
+    let openBurger = $state(true);
+    let addTitle = $state();
     let newTitle = $state();
     let conversations = $state([]);
     let msgBtnHover = $state(false);
@@ -17,7 +22,7 @@
     const { apiKey } = $props();
 
     $effect(() => {
-        if (conversationToDelete.id) {
+        if (conversationToDelete.status === false && conversationToDelete.id) {
             fillConversations();
         }
     });
@@ -26,7 +31,7 @@
         event.preventDefault();
 
         let newConversation = {
-            title: newTitle,
+            title: addTitle,
             user_token: apiKey,
         };
         const savedConversation = await saveConversation(newConversation);
@@ -36,7 +41,7 @@
             ...conversations,
         ];
         currentConversation.id = conversations[0].id;
-        newTitle = "";
+        addTitle = "";
         addChat = false;
     }
 
@@ -81,6 +86,10 @@
         }
     }
 
+    async function updateConversation(conversation) {
+        
+    }
+
     async function fillConversations() {
         const data = await getConversations();
         if (data !== null) {
@@ -94,6 +103,21 @@
         if (conversationToDelete.id === currentConversation.id) {
             currentConversation.id = conversations[0].id;
         }
+    }
+    async function handleModifyConversation(event) {
+        event.preventDefault();
+        const index = conversations.findIndex(
+            (conversation) => conversation.id === isModifying.id,
+        );
+        const conversationToUpdate = conversations.find(
+            (conversation) => conversation.id === isModifying.id,
+        );
+        const newConversation = conversationToUpdate;
+        newConversation.title = newTitle;
+
+        conversations.splice(1, index, newConversation)
+        await updateConversation(newConversation);
+        isModifying.status = false;
     }
     onMount(async () => {
         if (apiKey) {
@@ -136,7 +160,11 @@
             <ul>
                 {#each conversations as conversation}
                     {#if displayAllConv || currentConversation.id === conversation.id}
-                        <ChatListItem {conversation} />
+                        <ChatListItem
+                            {conversation}
+                            bind:newTitle
+                            onSubmit={handleModifyConversation}
+                        />
                     {/if}
                 {/each}
                 {#if conversations.length > 1}
@@ -174,7 +202,7 @@
                         type="text"
                         placeholder="Saisissez un titre"
                         required
-                        bind:value={newTitle}
+                        bind:value={addTitle}
                     />
                     <!-- svelte-ignore a11y_mouse_events_have_key_events -->
                     <button
@@ -302,7 +330,10 @@
     }
     .add-chat button {
         height: 1.5rem;
-        font-size: 1rem;
+        font-size: 1.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     .add-chat button:hover {
         background-color: var(--primary-color);
@@ -315,16 +346,16 @@
         .manager-container.offset {
             margin-left: 0;
         }
-        .manager-container.offset .burger-btn {
-            transform: translateX(calc(35dvw - 32px));
+        .manager-container.offset button.burger-btn  {
+            transform: translateX(calc(35dvw - 36px));
         }
         aside.chat-manager {
             width: 35dvw;
         }
     }
     @media (max-width: 728px) {
-        .manager-container.offset .burger-btn {
-            transform: translateX(calc(80dvw - 32px));
+        .manager-container.offset button.burger-btn  {
+            transform: translateX(calc(80dvw - 36px));
         }
         aside.chat-manager {
             width: 80dvw;

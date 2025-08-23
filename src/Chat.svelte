@@ -154,6 +154,7 @@
             questions = messages.filter((message) => !message.is_ai_response);
             answers = messages.filter((message) => message.is_ai_response);
             responseIsLoading = new Array(answers.length).fill(false);
+            scrollToMessage();
         }
     }
 
