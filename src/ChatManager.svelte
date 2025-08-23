@@ -2,7 +2,6 @@
     import Icon from "@iconify/svelte";
     import ChatListItem from "./ChatListItem.svelte";
     import { onMount } from "svelte";
-    import { tick } from "svelte";
     import {
         currentConversation,
         conversationToDelete,
@@ -18,7 +17,8 @@
     let newTitle = $state();
     let conversations = $state([]);
     let msgBtnHover = $state(false);
-    let displayAllConv = $state(false);
+    let displayAllConvButtonIsHover = $state(false);
+    let displayAllConv = $state(true);
 
     const { apiKey } = $props();
 
@@ -89,13 +89,16 @@
 
     async function updateConversation(conversationToUpdate) {
         try {
-            const response = await fetch(`${urlPocketbaseConversation}/${conversationToUpdate.id}`, {
-                method: "PATCH",
-                headers: {
-                    "content-type": "application/json",
+            const response = await fetch(
+                `${urlPocketbaseConversation}/${conversationToUpdate.id}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "content-type": "application/json",
+                    },
+                    body: JSON.stringify(conversationToUpdate),
                 },
-                body: JSON.stringify(conversationToUpdate),
-            });
+            );
             if (!response.ok) {
                 throw new Error(
                     `Erreur lors de l'enregistrement du message: ${response.status}`,
@@ -117,7 +120,10 @@
                 currentConversation.id = "empty";
             }
         }
-        if (conversationToDelete.id === currentConversation.id) {
+        if (
+            conversationToDelete.id &&
+            conversationToDelete.id === currentConversation.id
+        ) {
             currentConversation.id = conversations[0].id;
         }
     }
@@ -136,12 +142,39 @@
         conversations.splice(index, 1, updatedConversation || newConversation);
         isModifying.status = false;
     }
+    function openSideBar() {
+        openBurger = true;
+    }
+    function closeSideBar() {
+        openBurger = false;
+        addChat = false;
+        conversationToDelete.status = false;
+        isModifying.status = false;
+        addTitle = "";
+        newTitle = "";
+        msgBtnHover = false;
+        displayAllConv = false;
+    }
+    function openAllConv() {
+        displayAllConv = true;
+        displayAllConvButtonIsHover = false;
+        conversationToDelete.status = false;
+        isModifying.status = false;
+    }
+    function closeAllConv() {
+        if (
+            isModifying.id !== currentConversation.id &&
+            conversationToDelete.id !== currentConversation.id
+        ) {
+            conversationToDelete.status = false;
+            isModifying.status = false;
+        }
+        displayAllConv = false;
+        displayAllConvButtonIsHover = false;
+    }
     onMount(async () => {
         if (apiKey) {
             await fillConversations();
-            if (conversations.length > 0) {
-                currentConversation.id = conversations[0].id;
-            }
         }
     });
 </script>
@@ -152,9 +185,7 @@
         type="button"
         title="ouvrir le gestionnaire des conversations"
         aria-label="ouvrir le gestionnaire des conversations"
-        onclick={() => {
-            openBurger = !openBurger;
-        }}
+        onclick={openBurger ? closeSideBar : openSideBar}
     >
         <div class="message__btn-icon">
             <Icon
@@ -176,16 +207,18 @@
             <h2>Historique</h2>
             <ul>
                 {#each conversations as conversation}
-                    {#if displayAllConv || currentConversation.id === conversation.id}
+                    {#if displayAllConv || currentConversation.id === conversation.id || (!currentConversation.id && conversation === conversations[0])}
                         <ChatListItem
                             {conversation}
                             bind:newTitle
                             onSubmit={handleModifyConversation}
+                            onSelect={closeSideBar}
                         />
                     {/if}
                 {/each}
                 {#if conversations.length > 1}
                     <div class="display-all">
+                        <!-- svelte-ignore a11y_mouse_events_have_key_events -->
                         <button
                             type="button"
                             aria-label={displayAllConv
@@ -194,9 +227,34 @@
                             title={displayAllConv
                                 ? "masquer les anciennes conversations"
                                 : "afficher toutes les conversation"}
-                            onclick={() => (displayAllConv = !displayAllConv)}
-                            >{displayAllConv ? "-" : "+"}</button
+                            onclick={displayAllConv
+                                ? closeAllConv
+                                : openAllConv}
+                            onmouseover={() =>
+                                (displayAllConvButtonIsHover = true)}
+                            onmouseleave={() =>
+                                (displayAllConvButtonIsHover = false)}
                         >
+                            {#if displayAllConv}
+                                <Icon
+                                    icon={displayAllConvButtonIsHover
+                                        ? "majesticons:arrow-down-circle"
+                                        : "majesticons:arrow-down-circle-line"}
+                                    width="32"
+                                    height="32"
+                                    style="color: #474350"
+                                />
+                            {:else}
+                                <Icon
+                                    icon={displayAllConvButtonIsHover
+                                        ? "majesticons:arrow-left-circle"
+                                        : "majesticons:arrow-left-circle-line"}
+                                    width="32"
+                                    height="32"
+                                    style="color: #474350"
+                                />
+                            {/if}
+                        </button>
                     </div>
                 {/if}
             </ul>
@@ -317,17 +375,7 @@
         padding: 1.5rem 0;
     }
     .display-all button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 1.5rem;
-        height: 1.5rem;
-        color: var(--primary-color);
-        font-size: 1.5rem;
-    }
-    .display-all button:hover {
-        color: white;
-        background-color: var(--primary-color);
+        padding: 0;
     }
     .add-chat,
     aside form {
@@ -363,7 +411,7 @@
         .manager-container.offset {
             margin-left: 0;
         }
-        .manager-container.offset button.burger-btn  {
+        .manager-container.offset button.burger-btn {
             transform: translateX(calc(35dvw - 36px));
         }
         aside.chat-manager {
@@ -371,7 +419,7 @@
         }
     }
     @media (max-width: 728px) {
-        .manager-container.offset button.burger-btn  {
+        .manager-container.offset button.burger-btn {
             transform: translateX(calc(80dvw - 36px));
         }
         aside.chat-manager {

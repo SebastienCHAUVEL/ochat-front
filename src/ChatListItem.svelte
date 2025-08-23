@@ -6,7 +6,7 @@
     } from "./state.svelte";
     import Icon from "@iconify/svelte";
 
-    let { conversation, newTitle = $bindable(), onSubmit } = $props();
+    let { conversation, newTitle = $bindable(), onSubmit, onSelect} = $props();
 
     const urlPocketbaseConversation =
         "http://127.0.0.1:8090/api/collections/ochat_conversation/records";
@@ -19,6 +19,8 @@
         event.preventDefault();
         currentConversation.id = conversation.id;
         currentConversation.title = conversation.title;
+
+        onSelect();
     }
     async function handleDelete() {
         const isDeleted = await deleteConversation(conversation.id);

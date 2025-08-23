@@ -2,7 +2,7 @@
     import Markdown from "svelte-exmarkdown";
     import { onMount } from "svelte";
     import { tick } from "svelte";
-    import { currentConversation, conversationToDelete } from "./state.svelte";
+    import { currentConversation } from "./state.svelte";
     import "./ChatMsg.svelte";
 
     const { apiKey } = $props();
@@ -165,6 +165,7 @@
     });
 </script>
 
+<h2>{currentConversation.id ? currentConversation.title : "Discutez avec Mistral AI !"}</h2>
 {#each questions as question, i}
     <div class="chat-view">
         <section class="question">
@@ -186,8 +187,6 @@
             {/if}
         </section>
     </div>
-{:else}
-    <h2>Discutez avec Mistral AI !</h2>
 {/each}
 <section class="message">
     <chat-msg onsend={sendMessage} {responseIsLoading}></chat-msg>
