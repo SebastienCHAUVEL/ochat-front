@@ -251,11 +251,7 @@ Si j'avais eu plus de temps:
 
 TO DO
 
-- finir update conversaion
-- ajouter un titre auto au premier chat
-- desactiver les boutons au chargement
-- ajouter une omber au dessus du champ de saisie des msg
-- ajouter un titre en fonction de la conv
-- ajouter un bouton etes vous sur à la suppression d'une conversation
+- ajouter une conversation auto au premier chat
+- ajouter une conversation avant même d'avoir saisi le titre pour generer un titre auto si pas de titre
 - bouton changement de token
 - bouton remouter/redescendre

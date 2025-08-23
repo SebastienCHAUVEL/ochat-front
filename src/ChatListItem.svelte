@@ -161,6 +161,7 @@
                     type="button"
                     aria-label="modifier le titre"
                     title="modifier le titre"
+                    class="modif-title modifyer"
                     onclick={() => {
                         isModifying.status = true;
                         isModifying.id = conversation.id;
@@ -177,15 +178,15 @@
                         icon={modifyButtonHover
                             ? "fluent:pen-dismiss-20-filled"
                             : "fluent:pen-dismiss-20-regular"}
-                        width="24"
-                        height="24"
+                        width="16"
+                        height="16"
                         style="color: #474350"
                     />
                 </button>
                 <!-- svelte-ignore a11y_mouse_events_have_key_events -->
                 <button
                     type="button"
-                    class="remove-chat"
+                    class="remove-chat modifyer"
                     aria-label="supprimez cette conversation"
                     title="supprimez cette conversation"
                     onclick={() => {
@@ -203,8 +204,8 @@
                         icon={removeButtonHover
                             ? "mdi:chat-remove"
                             : "mdi:chat-remove-outline"}
-                        width="24"
-                        height="24"
+                        width="16"
+                        height="16"
                         style="color: #474350"
                     />
                 </button>

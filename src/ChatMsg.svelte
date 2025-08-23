@@ -26,6 +26,7 @@
         id="message__input"
         placeholder="Posez votre question"
         required
+        disabled={responseIsLoading[responseIsLoading.length-1]}
         bind:value={message}
     ></textarea>
     <!-- svelte-ignore a11y_mouse_events_have_key_events -->
@@ -33,6 +34,7 @@
         type="submit"
         title="Envoyez votre question à Mistral AI"
         aria-label="Envoyez votre question à Mistral AI"
+        disabled={responseIsLoading[responseIsLoading.length-1]}
         onmouseover={() => {
             msgBtnHover = true;
         }}

@@ -2,7 +2,7 @@
     import Markdown from "svelte-exmarkdown";
     import { onMount } from "svelte";
     import { tick } from "svelte";
-    import { currentConversation } from "./state.svelte";
+    import { currentConversation, generatedConversation } from "./state.svelte";
     import "./ChatMsg.svelte";
 
     const { apiKey } = $props();
@@ -17,10 +17,16 @@
     let answerElement = $state();
 
     $effect(() => {
-        if (currentConversation.id) {
+        if (currentConversation.id || currentConversation.id === null) {
             fillChat();
         }
     });
+    $effect(() => {
+        if(generatedConversation.done){
+            sendMessage(generatedConversation);
+            generatedConversation.done = undefined;
+        } 
+    })
     async function scrollToMessage() {
         await tick(); //Wait for the dom to load the last change
         if (answerElement) answerElement.scrollIntoView({ behavior: "smooth" });
@@ -45,22 +51,9 @@
                 }
             }
         }
-        console.log(messagesToSend);
         return messagesToSend;
     }
-    async function sendMessage(event) {
-        const question = {
-            content: event.detail,
-            is_ai_response: false,
-            id_conversation: currentConversation.id,
-        };
-        const savedQuestion = await saveMessage(question);
-        //We start the loading process to display loader
-        responseIsLoading = [...responseIsLoading, true];
-        //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
-        questions = [...questions, savedQuestion || question];
-        const messagesToSend = getMessagesToSend();
-        await scrollToMessage();
+    async function sendToMistral(messages) {
         try {
             const response = await fetch(urlMistral, {
                 method: "POST",
@@ -69,7 +62,7 @@
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    messages: messagesToSend,
+                    messages: messages,
                     model: "mistral-small-latest",
                 }),
             });
@@ -79,7 +72,6 @@
                 );
             }
             const data = await response.json();
-
             const answer = {
                 content: data.choices[0].message.content,
                 is_ai_response: true,
@@ -87,24 +79,71 @@
                 id_conversation: currentConversation.id,
             };
             const savedAnswer = await saveMessage(answer);
-
-            answers = [...answers, savedAnswer || answer];
-
+            return savedAnswer || answer;
+        } catch (error) {
+            console.error(error);
+            const answer = {
+                content: "Erreur de communication avec l'API de mistral",
+                is_ai_response: true,
+                error: true,
+                id_conversation: currentConversation.id,
+            };
+            return answer;
+        }
+    }
+    async function generateConversation(context) {
+        generatedConversation.done = false;
+        generatedConversation.detail = context;
+        try {
+            const response = await fetch(urlMistral, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${apiKey}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    messages: [
+                        {
+                            role: "user",
+                            content: `Génere moi un titre de conversation d'une phrase maximum sans émojis ou je ne sais quoi, juste le titre à partir de cette question : " ${context} "`,
+                        },
+                    ],
+                    model: "mistral-small-latest",
+                }),
+            });
+            if (!response.ok) {
+                throw new Error(
+                    `Erreur de communication avec mistral: ${response.status}`,
+                );
+            }
+            const data = await response.json();
+            generatedConversation.title = data.choices[0].message.content;
+        } catch (error) {
+            console.error(error);
+            generatedConversation.title = "Indiquez un titre";
+        }
+    }
+    async function sendMessage(event) {
+        if (!currentConversation.id) {
+            await generateConversation(event.detail);
+        } else {
+            let question = {
+                content: event.detail,
+                is_ai_response: false,
+                id_conversation: currentConversation.id,
+            };
+            const savedQuestion = await saveMessage(question);
+            //We start the loading process to display loader
+            responseIsLoading = [...responseIsLoading, true];
+            //If saving is complete we add the question formated by pocketbase else, we add the initial question to continue the chat even if the saving fail
+            questions = [...questions, savedQuestion || question];
+            await scrollToMessage();
+            const messagesToSend = getMessagesToSend();
+            const mistralAnswer = await sendToMistral(messagesToSend);
+            answers = [...answers, mistralAnswer];
             //Changing the actual state of responseIsLoading(at the last index)
             responseIsLoading = [...responseIsLoading.slice(0, -1), false];
             await scrollToMessage();
-        } catch (error) {
-            console.error(error);
-            answers = [
-                ...answers,
-                {
-                    content: "Erreur de communication avec l'API de mistral",
-                    is_ai_response: true,
-                    error: true,
-                    id_conversation: currentConversation.id,
-                },
-            ];
-            responseIsLoading = [...responseIsLoading.slice(0, -1), false];
         }
     }
 
@@ -157,15 +196,13 @@
             scrollToMessage();
         }
     }
-
-    onMount(() => {
-        if (currentConversation.id) {
-            fillChat();
-        }
-    });
 </script>
 
-<h2>{currentConversation.id ? currentConversation.title : "Discutez avec Mistral AI !"}</h2>
+<h2>
+    {currentConversation.id
+        ? currentConversation.title
+        : "Discutez avec Mistral AI !"}
+</h2>
 {#each questions as question, i}
     <div class="chat-view">
         <section class="question">

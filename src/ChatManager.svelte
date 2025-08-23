@@ -6,6 +6,7 @@
         currentConversation,
         conversationToDelete,
         isModifying,
+        generatedConversation
     } from "./state.svelte";
 
     const urlPocketbaseConversation =
@@ -27,12 +28,26 @@
             fillConversations();
         }
     });
-
-    async function addConversation(event) {
+    $effect(() => {
+        if (generatedConversation.title) {
+            addConversation(generatedConversation.title);
+        }
+    });
+    function addConversationClick() {
+        if (!addChat) {
+            currentConversation.id = null;
+            currentConversation.title = "";
+        }
+        addChat = !addChat;
+    }
+    async function handleAddTitle(event) {
         event.preventDefault();
+        await addConversation(addTitle)
+    }
 
+    async function addConversation(newConversationTitle) {
         let newConversation = {
-            title: addTitle,
+            title: newConversationTitle,
             user_token: apiKey,
         };
         const savedConversation = await saveConversation(newConversation);
@@ -42,8 +57,11 @@
             ...conversations,
         ];
         currentConversation.id = conversations[0].id;
+        currentConversation.title = conversations[0].title;
+        closeSideBar();
         addTitle = "";
         addChat = false;
+        if(generatedConversation.done === false) generatedConversation.done = true;
     }
 
     async function saveConversation(conversationToSave) {
@@ -154,6 +172,7 @@
         newTitle = "";
         msgBtnHover = false;
         displayAllConv = false;
+        displayAllConvButtonIsHover = false;
     }
     function openAllConv() {
         displayAllConv = true;
@@ -266,13 +285,13 @@
                 class="add-chat"
                 aria-label="Ajouter une nouvelle conversation"
                 title="Ajouter une nouvelle conversation"
-                onclick={() => (addChat = !addChat)}
+                onclick={addConversationClick}
             >
                 <span class="chat-title">Nouveau chat</span>
                 <button type="button">{addChat ? "-" : "+"}</button>
             </p>
             {#if addChat}
-                <form onsubmit={addConversation}>
+                <form onsubmit={handleAddTitle}>
                     <input
                         type="text"
                         placeholder="Saisissez un titre"
