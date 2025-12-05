@@ -6,8 +6,8 @@
     font-style: normal;
     --primary-color: #474350; 
     --secondary-color: #3B3742; 
-    --light-color: #CFD0C5; 
-    --lighter-color: #CFD0C588;
+    --light-color: #d9dbc6; 
+    --lighter-color: white;
 }
 body{
     margin: 0;

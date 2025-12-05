@@ -251,7 +251,5 @@ Si j'avais eu plus de temps:
 
 TO DO
 
-- ajouter une conversation auto au premier chat
-- ajouter une conversation avant même d'avoir saisi le titre pour generer un titre auto si pas de titre
 - bouton changement de token
 - bouton remouter/redescendre
