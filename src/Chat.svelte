@@ -148,10 +148,6 @@
     //We start the loading process to display loader
     responseIsLoading = [...responseIsLoading, true];
     questions = [...questions, savedQuestion || question];
-    console.log("responseIsLoading true: "); /////////////////////////
-    console.log(responseIsLoading); //////////////////////////////////
-    console.log("questions: "); /////////////////////////
-    console.log(questions); //////////////////////////////////
     await scrollToMessage();
     const messagesToSend = getMessagesToSend();
     const data = await sendToMistral(messagesToSend);
@@ -162,10 +158,6 @@
     };
     responseIsLoading[responseIsLoading.length - 1] = false;
     answers = [...answers, answer];
-    console.log("responseIsLoading false: "); /////////////////////////
-    console.log(responseIsLoading); //////////////////////////////////
-    console.log("answers: "); /////////////////////////
-    console.log(answers); //////////////////////////////////
     await scrollToMessage();
     if (isLoggedIn && !data.error) await saveMessage(answer);
   }
