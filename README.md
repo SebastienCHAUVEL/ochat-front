@@ -1,8 +1,10 @@
 # 🤖 Ochat front - SPA avec Svelte
 
-**Mistral Chat** est une Single Page Application permettant de discuter avec l'IA Mistral.
+**Ochat** est une Single Page Application permettant de discuter avec l'IA Mistral.
 
 👉 [Voir la démo en ligne](https://ochat-front.vercel.app/)
+
+👉 [Accèder au repo du backend](https://github.com/SebastienCHAUVEL/ochat-api)
 
 ---
 
