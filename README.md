@@ -56,12 +56,12 @@ Ce projet démontre :
    - **Burger button** pour afficher/masquer le slider
    - **Bouton de défilement** pour afficher/masquer les anciennes conversations
 
-## Wireframe
+## Mockup
 
-wireframe réalisé au début du projet qui représente :
+Mockup réalisé avec **figma** au début du projet qui représente :
 
 - L'organisation/disposition des éléments de l'interface
 - Les principales interactions (affichage des messages, envoi de messages)
 - La structure globale de l'application
 
-![Image wireframe](docs/wireframe.png)
+![Image wireframe](docs/mockup.png)
