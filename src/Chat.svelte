@@ -1,11 +1,8 @@
 <script>
-  import { createEventDispatcher } from "svelte";
   import Markdown from "svelte-exmarkdown";
   import { tick } from "svelte";
   import { currentConversation } from "./state.svelte";
   import "./ChatMsg.svelte";
-
-  const dispatch = createEventDispatcher();
 
   let {
     baseUrl,
