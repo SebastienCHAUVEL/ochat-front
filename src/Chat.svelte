@@ -120,7 +120,7 @@
     if (data.error) answer.content = "";
     if (isLoggedIn) {
       await saveMessage(question);
-      await saveMessage(answer);
+      await saveMessage({ ...answer, content: data.error ? "" : data.content });
     }
   }
 
