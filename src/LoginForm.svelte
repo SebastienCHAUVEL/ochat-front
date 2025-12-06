@@ -30,13 +30,7 @@
         bind:value={username}
       />
       <label for="password">Mot de passe</label>
-      <input
-        id="password"
-        type="password"
-        autofocus
-        required
-        bind:value={password}
-      />
+      <input id="password" type="password" required bind:value={password} />
       <!-- svelte-ignore a11y_mouse_events_have_key_events -->
       <div class="submit-container">
         <button

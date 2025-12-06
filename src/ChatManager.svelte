@@ -6,28 +6,26 @@
     currentConversation,
     conversationToDelete,
     isModifying,
-    generatedConversation,
   } from "./state.svelte";
 
-  let addChat = $state(false);
-  let openBurger = $state(true);
-  let addTitle = $state();
-  let newTitle = $state();
-  let conversations = $state([]);
-  let msgBtnHover = $state(false);
-  let displayAllConvButtonIsHover = $state(false);
-  let displayAllConv = $state(false);
-
-  const { baseUrl, isLoggedIn } = $props();
+  let {
+    baseUrl,
+    isLoggedIn,
+    onAddTitleSubmit,
+    onCloseSideBar,
+    addChat = $bindable(),
+    addTitle = $bindable(),
+    conversations = $bindable(),
+    openBurger = $bindable(),
+    newTitle = $bindable(),
+    msgBtnHover = $bindable(),
+    displayAllConv = $bindable(),
+    displayAllConvButtonIsHover = $bindable(),
+  } = $props();
 
   $effect(() => {
     if (conversationToDelete.status === false && conversationToDelete.id) {
       fillConversations();
-    }
-  });
-  $effect(() => {
-    if (generatedConversation.title && generatedConversation.done === false) {
-      addConversation(generatedConversation.title);
     }
   });
   function addConversationClick() {
@@ -35,50 +33,11 @@
     if (addChat) {
       currentConversation.id = null;
       currentConversation.title = null;
-      generatedConversation.title = null;
     }
   }
   async function handleAddTitle(event) {
     event.preventDefault();
-    await addConversation(addTitle);
-  }
-
-  async function addConversation(newConversationTitle) {
-    let newConversation = {
-      title: newConversationTitle,
-    };
-    let savedConversation;
-    if (isLoggedIn) savedConversation = await saveConversation(newConversation);
-    conversations = [savedConversation || newConversation, ...conversations];
-    if (savedConversation) currentConversation.id = conversations[0].id;
-    currentConversation.title = conversations[0].title;
-    closeSideBar();
-    addTitle = "";
-    addChat = false;
-    if (generatedConversation.done === false) generatedConversation.done = true;
-  }
-
-  async function saveConversation(conversationToSave) {
-    try {
-      const response = await fetch(`${baseUrl}/conversations`, {
-        credentials: "include",
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(conversationToSave),
-      });
-      if (!response.ok) {
-        throw new Error(
-          `Erreur lors de l'enregistrement de la conversation: ${response.status}`
-        );
-      }
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
+    onAddTitleSubmit();
   }
 
   async function getConversations() {
@@ -162,17 +121,6 @@
   function openSideBar() {
     openBurger = true;
   }
-  function closeSideBar() {
-    openBurger = false;
-    addChat = false;
-    conversationToDelete.status = false;
-    isModifying.status = false;
-    addTitle = "";
-    newTitle = "";
-    msgBtnHover = false;
-    displayAllConv = false;
-    displayAllConvButtonIsHover = false;
-  }
   function openAllConv() {
     displayAllConv = true;
     displayAllConvButtonIsHover = false;
@@ -201,7 +149,7 @@
     type="button"
     title="ouvrir le gestionnaire des conversations"
     aria-label="ouvrir le gestionnaire des conversations"
-    onclick={openBurger ? closeSideBar : openSideBar}
+    onclick={openBurger ? onCloseSideBar : openSideBar}
   >
     <div class="message__btn-icon">
       <Icon
@@ -237,7 +185,7 @@
                   {baseUrl}
                   bind:newTitle
                   onSubmit={handleModifyConversation}
-                  onSelect={closeSideBar}
+                  onSelect={onCloseSideBar}
                 />
               {/if}
             {/each}

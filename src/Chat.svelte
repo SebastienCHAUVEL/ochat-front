@@ -1,14 +1,19 @@
 <script>
+  import { createEventDispatcher } from "svelte";
   import Markdown from "svelte-exmarkdown";
   import { tick } from "svelte";
-  import { currentConversation, generatedConversation } from "./state.svelte";
+  import { currentConversation } from "./state.svelte";
   import "./ChatMsg.svelte";
+
+  const dispatch = createEventDispatcher();
 
   let {
     baseUrl,
     isLoggedIn,
     questions = $bindable(),
     answers = $bindable(),
+    addTitle = $bindable(),
+    onTitleGenerated = $bindable(),
   } = $props();
 
   let responseIsLoading = $state([]);
@@ -19,16 +24,12 @@
       fillChat();
     }
   });
-  $effect(() => {
-    if (generatedConversation.done && currentConversation.title) {
-      sendMessage(generatedConversation);
-      generatedConversation.done = null;
-    }
-  });
+
   async function scrollToMessage() {
     await tick(); //Wait for the dom to load the last change
     if (answerElement) answerElement.scrollIntoView({ behavior: "smooth" });
   }
+
   function getMessagesToSend() {
     let messagesToSend = [];
     for (let i = 0; i < questions.length; i++) {
@@ -61,6 +62,7 @@
 
     return messagesToSend;
   }
+
   async function sendToMistral(messages) {
     try {
       const response = await fetch(`${baseUrl}/prompt/mistral`, {
@@ -87,9 +89,42 @@
       return { content, error: true };
     }
   }
+
+  async function sendMessage(event) {
+    let question = {
+      content: event.detail,
+      isAiResponse: false,
+    };
+    responseIsLoading = [...responseIsLoading, true];
+    questions = [...questions, question];
+
+    await scrollToMessage();
+
+    if (!currentConversation.title) {
+      await generateConversation(event.detail);
+    }
+
+    question.conversationId = currentConversation.id;
+
+    //We start the loading process to display loader
+    const messagesToSend = getMessagesToSend();
+    const data = await sendToMistral(messagesToSend);
+    let answer = {
+      content: data.content,
+      isAiResponse: true,
+      conversationId: currentConversation.id,
+    };
+    responseIsLoading[responseIsLoading.length - 1] = false;
+    answers = [...answers, answer];
+    await scrollToMessage();
+    if (data.error) answer.content = "";
+    if (isLoggedIn) {
+      await saveMessage(question);
+      await saveMessage(answer);
+    }
+  }
+
   async function generateConversation(context) {
-    generatedConversation.done = false;
-    generatedConversation.detail = context;
     try {
       const response = await fetch(`${baseUrl}/prompt/mistral`, {
         method: "POST",
@@ -121,45 +156,17 @@
         );
       }
       const data = await response.json();
-      generatedConversation.title = data.content;
+      addTitle = data.content;
     } catch (error) {
       console.error(error);
       if (isLoggedIn) {
-        generatedConversation.title = "Indiquez un titre";
+        addTitle = "Indiquez un titre";
       } else {
-        generatedConversation.title = "Server error";
+        addTitle = "Server error";
       }
+    } finally {
+      await onTitleGenerated();
     }
-  }
-  async function sendMessage(event) {
-    // je pense que .done vaut encore true quand on ajoute une conversation donc
-    if (!currentConversation.title) {
-      if (!generatedConversation.done) await generateConversation(event.detail);
-      return;
-    }
-
-    let question = {
-      content: event.detail,
-      isAiResponse: false,
-      conversationId: currentConversation.id,
-    };
-    let savedQuestion;
-    if (isLoggedIn) savedQuestion = await saveMessage(question);
-    //We start the loading process to display loader
-    responseIsLoading = [...responseIsLoading, true];
-    questions = [...questions, savedQuestion || question];
-    await scrollToMessage();
-    const messagesToSend = getMessagesToSend();
-    const data = await sendToMistral(messagesToSend);
-    let answer = {
-      content: data.content,
-      isAiResponse: true,
-      conversationId: currentConversation.id,
-    };
-    responseIsLoading[responseIsLoading.length - 1] = false;
-    answers = [...answers, answer];
-    await scrollToMessage();
-    if (isLoggedIn && !data.error) await saveMessage(answer);
   }
 
   async function saveMessage(message) {
@@ -175,15 +182,20 @@
           body: JSON.stringify(message),
         }
       );
+      const data = await response.json();
       if (!response.ok) {
         throw new Error(
-          `Erreur lors de l'enregistrement du message: ${response.status}`
+          `Erreur lors de l'enregistrement du message: ${data.error}`,
+          { cause: "server" }
         );
       }
-      const data = await response.json();
       return data;
     } catch (error) {
-      console.error(error);
+      if (error.cause === "server") {
+        console.error(error.message);
+      } else {
+        console.error(error);
+      }
       return null;
     }
   }

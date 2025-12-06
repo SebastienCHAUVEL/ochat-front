@@ -5,9 +5,13 @@
   import LoginForm from "./LoginForm.svelte";
   import Icon from "@iconify/svelte";
   import RegisterForm from "./RegisterForm.svelte";
+  import {
+    currentConversation,
+    isModifying,
+    conversationToDelete,
+  } from "./state.svelte";
 
   const baseUrl = import.meta.env.VITE_BASE_URL;
-  let apiKey = $state();
   let user = $state({});
   let isLoggedIn = $state(false);
   let page = $state("");
@@ -18,6 +22,66 @@
   let passwordConfirmation = $state();
   let questions = $state([]);
   let answers = $state([]);
+  let conversations = $state([]);
+  let addChat = $state(false);
+  let addTitle = $state();
+
+  let openBurger = $state(true);
+  let newTitle = $state();
+  let msgBtnHover = $state(false);
+  let displayAllConvButtonIsHover = $state(false);
+  let displayAllConv = $state(false);
+
+  async function addConversation() {
+    let newConversation = { title: addTitle };
+    let savedConversation;
+    if (isLoggedIn) savedConversation = await saveConversation(newConversation);
+    conversations = [savedConversation || newConversation, ...conversations];
+    if (savedConversation) currentConversation.id = conversations[0].id;
+    currentConversation.title = conversations[0].title;
+    closeSideBar();
+    addTitle = "";
+    addChat = false;
+  }
+
+  function closeSideBar() {
+    openBurger = false;
+    addChat = false;
+    conversationToDelete.status = false;
+    isModifying.status = false;
+    addTitle = "";
+    newTitle = "";
+    msgBtnHover = false;
+    displayAllConv = false;
+    displayAllConvButtonIsHover = false;
+  }
+  async function saveConversation(conversationToSave) {
+    try {
+      const response = await fetch(`${baseUrl}/conversations`, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(conversationToSave),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(
+          `Erreur lors de l'enregistrement de la conversation: ${data.error}`,
+          { cause: "server" }
+        );
+      }
+      return data;
+    } catch (error) {
+      if (error.cause === "server") {
+        console.error(error.message);
+      } else {
+        console.error(error);
+      }
+      return null;
+    }
+  }
 
   async function handleLoginSubmit(event) {
     event.preventDefault();
@@ -219,9 +283,29 @@
         >
       {/if}
     </div>
-    <ChatManager {baseUrl} {isLoggedIn} />
+    <ChatManager
+      {baseUrl}
+      {isLoggedIn}
+      bind:addChat
+      bind:addTitle
+      bind:conversations
+      bind:openBurger
+      bind:newTitle
+      bind:msgBtnHover
+      bind:displayAllConv
+      bind:displayAllConvButtonIsHover
+      onAddTitleSubmit={addConversation}
+      onCloseSideBar={closeSideBar}
+    />
     <main>
-      <Chat {baseUrl} {isLoggedIn} bind:questions bind:answers />
+      <Chat
+        {baseUrl}
+        {isLoggedIn}
+        bind:questions
+        bind:answers
+        bind:addTitle
+        onTitleGenerated={addConversation}
+      />
     </main>
   {/if}
 </div>
