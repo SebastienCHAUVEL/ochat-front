@@ -132,7 +132,7 @@
     justify-content: center;
     align-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
   }
   label {
     width: 60dvw;
@@ -203,8 +203,8 @@
     font-size: 0.8rem;
     display: flex;
     flex-direction: column;
-    padding: 0.5rem;
-    align-self: flex-start;
+    width: 60dvw;
+    max-width: 280px;
   }
   .red {
     color: rgba(255, 0, 0, 0.616);
