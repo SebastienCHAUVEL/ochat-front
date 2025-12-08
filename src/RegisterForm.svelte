@@ -11,6 +11,28 @@
     passwordConfirmation = $bindable(),
   } = $props();
   let submitBtnHover = $state(false);
+  let constrainClass = $state({
+    maj: "red",
+    min: "red",
+    nbChar: "red",
+    specialChar: "red",
+    digit: "red",
+  });
+
+  $effect(() => {
+    if (password) {
+      constrainClass.nbChar = password.length >= 8 ? "ok" : "red";
+      constrainClass.maj = /[A-Z]/.test(password) ? "ok" : "red";
+      constrainClass.min = /[a-z]/.test(password) ? "ok" : "red";
+      constrainClass.digit = /[0-9]/.test(password) ? "ok" : "red";
+      constrainClass.specialChar = /[\W_]/.test(password) ? "ok" : "red";
+    }
+    if (password === "") {
+      for (let property in constrainClass) {
+        constrainClass[property] = "red";
+      }
+    }
+  });
 </script>
 
 <div>
@@ -19,7 +41,7 @@
     <div class="container">
       <label for="username">
         {#if registerError}
-          <span>{registerError}</span>
+          <span class="error">{registerError}</span>
         {/if}
         Nom d'utilisateur
       </label>
@@ -30,7 +52,9 @@
         required
         bind:value={username}
       />
-      <label for="password">Mot de passe</label>
+      <label for="password" id="password-label">
+        <span class="label-part password-part">Mot de passe</span>
+      </label>
       <input
         id="password"
         type="password"
@@ -38,7 +62,13 @@
         required
         bind:value={password}
       />
-
+      <span class="password-constrain">
+        <span class={constrainClass.nbChar}>8 caracteres</span>
+        <span class={constrainClass.specialChar}>1 caractere spécial</span>
+        <span class={constrainClass.maj}>1 Majuscule</span>
+        <span class={constrainClass.min}>1 Minuscule</span>
+        <span class={constrainClass.digit}>1 chiffre</span>
+      </span>
       <label for="passwordConfirmation">Confirmez votre mot de passe</label>
       <input
         id="passwordConfirmation"
@@ -47,37 +77,37 @@
         required
         bind:value={passwordConfirmation}
       />
-      <!-- svelte-ignore a11y_mouse_events_have_key_events -->
-      <div class="submit-container">
+      <button class="link simple-link" type="button" onclick={onLoginClick}
+        >Déjà inscrit ?</button
+      >
+      <div class="button-section">
+        <!-- svelte-ignore a11y_mouse_events_have_key_events -->
         <button
-          type="submit"
-          title="valider"
-          aria-label="valider"
           onmouseover={() => {
             submitBtnHover = true;
           }}
           onmouseleave={() => {
             submitBtnHover = false;
           }}
+          class="link primary-link"
+          type="submit"
         >
-          <div class="message__btn-icon">
-            <Icon
-              icon={submitBtnHover ? "el:ok-sign" : "el:ok-circle"}
-              width="32"
-              height="32"
-              style="color: #474350"
-            />
-          </div>
-        </button>
-        <button class="link" type="button" onclick={onLoginClick}
-          >Déjà inscrit ?</button
+          <Icon
+            icon={submitBtnHover ? "el:ok-sign" : "el:ok-circle"}
+            width="24"
+            height="24"
+            style="color: #474350; background-color:#d9dbc6 "
+          />
+          <span>Valider</span></button
+        >
+        <button
+          class="link primary-link"
+          type="button"
+          onclick={onGuestModeClick}>Continuer en tant qu'invité</button
         >
       </div>
     </div>
   </form>
-  <button class="link primary-link" type="button" onclick={onGuestModeClick}
-    ><span>Continuer en tant qu'invité</span></button
-  >
 </div>
 
 <style>
@@ -109,7 +139,7 @@
     max-width: 280px;
     color: var(--primary-color);
   }
-  label span {
+  label .error {
     color: red;
     font-weight: 300;
     font-size: 0.8rem;
@@ -127,12 +157,6 @@
   input:focus {
     border: 1px solid var(--primary-color);
   }
-  .submit-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-  }
   button {
     border: none;
     align-self: flex-start;
@@ -143,15 +167,10 @@
   }
   button.link {
     color: var(--primary-color);
-    align-self: inherit;
     font-size: 1rem;
   }
   button.link:hover {
     text-decoration: underline;
-  }
-  .message__btn-icon {
-    width: 48px;
-    height: 48px;
   }
   .primary-link {
     display: flex;
@@ -161,9 +180,36 @@
     border-radius: 1rem;
     background-color: var(--light-color);
     font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
   }
   .primary-link span {
     background-color: var(--light-color);
-    margin: auto;
+  }
+  button.simple-link {
+    align-self: flex-end;
+  }
+  #password-label {
+    display: flex;
+  }
+  .label-part {
+    width: 50%;
+  }
+  .password-part {
+    align-self: flex-end;
+  }
+  .password-constrain {
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    align-self: flex-start;
+  }
+  .red {
+    color: rgba(255, 0, 0, 0.616);
+  }
+  .ok {
+    color: var(--primary-color);
   }
 </style>

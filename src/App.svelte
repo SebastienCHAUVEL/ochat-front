@@ -323,12 +323,15 @@
     position: relative;
     margin: 0 auto;
     transition: all 0.5s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   .login-form {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: auto;
+    margin: 2rem auto 2rem auto;
     box-shadow: 1rem 1rem 35px 5px rgba(139, 138, 139, 0.2);
   }
   .login-nav {

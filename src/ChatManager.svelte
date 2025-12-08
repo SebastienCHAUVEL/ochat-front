@@ -151,12 +151,15 @@
     aria-label="ouvrir le gestionnaire des conversations"
     onclick={openBurger ? onCloseSideBar : openSideBar}
   >
-    <div class="message__btn-icon">
+    <div
+      class="message__btn-icon"
+      style="color: #474350; background-color: rgba(255, 255, 255, 0)"
+    >
       <Icon
         icon={openBurger ? "mdi:hamburger-menu-back" : "mdi:hamburger-close"}
         width="32"
         height="32"
-        style="color: #474350"
+        style="color: #474350; background-color: rgba(255, 255, 255, 0)"
       />
     </div>
   </button>
@@ -303,6 +306,7 @@
   }
   .manager-container.offset button.burger-btn {
     transform: translateX(-36px);
+    background-color: rgba(255, 255, 255, 0);
   }
   aside.chat-manager {
     height: 100dvh;

@@ -32,36 +32,37 @@
       <label for="password">Mot de passe</label>
       <input id="password" type="password" required bind:value={password} />
       <!-- svelte-ignore a11y_mouse_events_have_key_events -->
-      <div class="submit-container">
+      <button class="link simple-link" type="button" onclick={onRegisterClick}
+        >Créer un compte</button
+      >
+      <div class="button-section">
+        <!-- svelte-ignore a11y_mouse_events_have_key_events -->
         <button
-          type="submit"
-          title="valider"
-          aria-label="valider"
           onmouseover={() => {
             submitBtnHover = true;
           }}
           onmouseleave={() => {
             submitBtnHover = false;
           }}
+          class="link primary-link"
+          type="submit"
         >
-          <div class="message__btn-icon">
-            <Icon
-              icon={submitBtnHover ? "el:ok-sign" : "el:ok-circle"}
-              width="32"
-              height="32"
-              style="color: #474350"
-            />
-          </div>
-        </button>
-        <button class="link" type="button" onclick={onRegisterClick}
-          >Créer un compte</button
+          <Icon
+            icon={submitBtnHover ? "el:ok-sign" : "el:ok-circle"}
+            width="24"
+            height="24"
+            style="color: #474350; background-color:#d9dbc6 "
+          />
+          <span>Valider</span></button
+        >
+        <button
+          class="link primary-link"
+          type="button"
+          onclick={onGuestModeClick}>Continuer en tant qu'invité</button
         >
       </div>
     </div>
   </form>
-  <button class="link primary-link" type="button" onclick={onGuestModeClick}
-    ><span>Continuer en tant qu'invité</span></button
-  >
 </div>
 
 <style>
@@ -111,12 +112,6 @@
   input:focus {
     border: 1px solid var(--primary-color);
   }
-  .submit-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-  }
   button {
     border: none;
     align-self: flex-start;
@@ -127,27 +122,28 @@
   }
   button.link {
     color: var(--primary-color);
-    align-self: inherit;
     font-size: 1rem;
   }
   button.link:hover {
     text-decoration: underline;
   }
-  .message__btn-icon {
-    width: 48px;
-    height: 48px;
-  }
   .primary-link {
     display: flex;
     width: calc(100% - 4rem);
-    margin: 1rem 2rem 2rem 2rem;
+    margin: 1rem 0 2rem 0;
     padding: 1rem;
     border-radius: 1rem;
     background-color: var(--light-color);
     font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
   }
   .primary-link span {
     background-color: var(--light-color);
-    margin: auto;
+  }
+  button.simple-link {
+    align-self: flex-end;
   }
 </style>
