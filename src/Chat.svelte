@@ -239,8 +239,8 @@
 <h2>
   {currentConversation.title ?? "Discutez avec Mistral AI !"}
 </h2>
-{#each questions as question, i}
-  <div class="chat-view">
+<div class="chat-view">
+  {#each questions as question, i}
     <section class="question">
       <p>
         {question.content}
@@ -259,13 +259,16 @@
         </div>
       {/if}
     </section>
-  </div>
-{/each}
+  {/each}
+</div>
 <section class="message">
   <chat-msg onsend={sendMessage} {responseIsLoading}></chat-msg>
 </section>
 
 <style>
+  .chat-view {
+    flex: 1;
+  }
   .question {
     display: flex;
     justify-content: flex-end;

@@ -210,6 +210,6 @@
     color: rgba(255, 0, 0, 0.616);
   }
   .ok {
-    color: var(--primary-color);
+    color: #09423e;
   }
 </style>
