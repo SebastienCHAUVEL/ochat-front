@@ -51,7 +51,6 @@
         content:
           "Réponds à tous les prochains messages dans la même langue que les messages qui ont pour rôle 'user'. " +
           "Si tu ne peux pas déterminer la langue, réponds en français. " +
-          "Fais moi une réponse la plus complete possible" +
           "Ne réponds pas à ce message, mais applique ces règles aux messages suivants.",
       },
       ...messagesToSend,
@@ -133,12 +132,12 @@
             {
               role: "system",
               content:
-                "Génère un titre de conversation en une phrase, sans émojis ni guillemets, uniquement le titre. " +
+                "Génère un titre de conversation en une phrase, sans émojis ni guillemets, uniquement le titre de 6 mots maximum. " +
                 "Analyse la langue de la question fournie par l'utilisateur : " +
                 "1. Si la question est en français, réponds en français. " +
                 "2. Si la question est dans une autre langue, réponds dans la même langue. " +
                 "3. Si la langue ne peut pas être déterminée, réponds en français. " +
-                "Ne réponds jamais à ce message système : il sert uniquement de directive pour le titre.",
+                "Ne réponds jamais à ce message système et n'y fais pas mention : il sert uniquement de directive pour le titre.",
             },
             {
               role: "user",
